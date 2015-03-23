@@ -24,7 +24,7 @@ def registerVote(username,vote):
 #----------------------------------
 
 def getUserDetails(username):
-	details = { 'username':'kayush' , 'voted': True, 'Department':'cse', 'name':'Ayush', 'course':'btech','encryptedPrivateKey':'qwertyuiop' }
+	details = { 'username':'kayush' , 'voted': True, 'Department':'cse', 'name':'Ayush', 'course':'btech'}
 	return details
 
 #-------------------------------
@@ -53,7 +53,7 @@ def approveCandidate(username):
 #------------------------
 
 def getCandidateDetail(username):
-	detail = {'username':'sudhanshu', 'post':'vp', 'picture':'sudhanshu.jpg','form-data':{'agenda':'my agenda', 'position-of-responsibility':'Director of IITG' }}
+	details = {'username':'sudhanshu', 'post':'vp', 'picture':'sudhanshu.jpg','form-data':{'agenda':'my agenda', 'position-of-responsibility':'Director of IITG' }}
 	return details
 
 #----------------------
@@ -64,29 +64,31 @@ def setCandidateDetails(username):
 	detail = json.dumps(detail)
 	return detail
 #----------------------
-def getElectionState(state):
+def getElectionState():
+	state = 0 #modify as per requirement of module
 	if state ==0:
 		var = 'pre-election'
 	elif state == 1:
-		var = 'during election'
+		var = 'during-election'
 	else:
 		var = 'post-election'
 	return var
 #-----------------------------
 def setElectionState(state):
-        if state ==0:
-                var = 'pre-election'
-        elif state == 1:
-                var = 'during election'
+        if state == 'pre-election:
+                var = 0
+        elif state == 'during-election':
+                var = 1
         else:
-                var = 'post-election'
+                var = 2
+		assert(state == 'post-election')
 #-------------------------
 def getCandidatePost(postId):
-	post = {'vp':{'candidate1':'Ayush ', 'Candidate2':'Sudhanshu'}, 'welfare':{'candidate1':'Ayush ', 'Candidate2':'Sudhanshu'}, 'sport':{'candidate1':'Ayush ', 'Candidate2':'Sudhanshu'}}
+	post = {'vp':{'candidate1':'kayush ', 'Candidate2':'sudhanshu'}, 'welfare':{'candidate1':'kayush ', 'Candidate2':'sudhanshu'}, 'sport':{'candidate1':'kayush ', 'Candidate2':'sudhanshu'}}
 	return post
 
 #--------------------------
-def importElectionData(src):
+def getElectionStats(src):
 	stats = {'':''}
 	return stats
 #------------------------
