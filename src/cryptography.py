@@ -52,7 +52,7 @@ def asymmetricSign(message, key):
 	h = SHA.new()
 	h.update(message)
 	signer = PKCS1_PSS.new(key)
-	return signer.sign(h)
+	return binascii.b2a_base64(signer.sign(h))
 
 def asymmetricVerify(message, signature, key):
 	"""Verifies the signature using 'key' and 'message'"""
@@ -60,6 +60,7 @@ def asymmetricVerify(message, signature, key):
 	h = SHA.new()
 	h.update(message)
 	verifier = PKCS1_PSS.new(key)
+	signature = binascii.a2b_base64(signature)
 	return verifier.verify(h, signature)
 
 '''
