@@ -3,11 +3,8 @@
 import os,sys
 import json
 
-from mainSite.models import User
-from mainSite.models import Candidates
-from mainSite.models import Votes 
-from mainSite.models import PublicKeys
-from mainSite.models import ChallengeStrings
+from models import User, Candidates,Votes, PublicKeys, ChallengeStrings 
+ 
 
 def addUser(username,voted,department,name,course,encryptedPrivateKey):
 	p1 = User(username=username, voted=voted, department=department, name=name, course=course, encryptedPrivateKey=encryptedPrivateKey)
@@ -18,13 +15,13 @@ def addUser(username,voted,department,name,course,encryptedPrivateKey):
 def addCandidate(username,details,photo,approved):
 	if len(User.objects.all()) == 0:
 		 return False
-	else
+	else:
 		p1 = Candidates(username=username, details=details, photo=photo, approved=approved)
 		p1.save()
 		return True
 #---------------------------------
 def addVotes(plainText,certificate):
-	p1 = Votes(plainText=plainText, certificate=certificate):
+	p1 = Votes(plainText=plainText, certificate=certificate)
 	p1.save()
 #--------------------------------
 def addChallengeStrings(challengeStr):
@@ -50,7 +47,7 @@ def registerVote(username,vote):
 	voted = False
 	if voted != False:
 		return False
-	else
+	else:
 		return True
 
 #----------------------------------

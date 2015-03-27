@@ -9,15 +9,17 @@ class User(models.Model):
 	course = models.CharField(max_length=30)
 	encryptedPrivateKey = models.CharField(max_length=2048)
 	
-	#def __unicode__(self):
-     #   	return self.name
+	def __unicode__(self):
+        	return self.name
+
 
 class Candidates(models.Model):
 	username = models.CharField(max_length=50)
 	details = models.CharField(max_length=10000)
 	photo = models.CharField(max_length=100)
 	approved = models.BooleanField()
-
+	def __unicode__(self):
+        	return self.username
 class Votes(models.Model):
 	plainText = models.CharField(max_length=50)
 	certificate = models.CharField(max_length=60)
