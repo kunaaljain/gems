@@ -3,6 +3,38 @@
 import os,sys
 import json
 
+from mainSite.models import User
+from mainSite.models import Candidates
+from mainSite.models import Votes 
+from mainSite.models import PublicKeys
+from mainSite.models import ChallengeStrings
+
+def addUser(username,voted,department,name,course,encryptedPrivateKey):
+	p1 = User(username=username, voted=voted, department=department, name=name, course=course, encryptedPrivateKey=encryptedPrivateKey)
+	p1.save()
+	return True
+
+#---------------------------------
+def addCandidate(username,details,photo,approved):
+	if len(User.objects.all()) == 0:
+		 return False
+	else
+		p1 = Candidates(username=username, details=details, photo=photo, approved=approved)
+		p1.save()
+		return True
+#---------------------------------
+def addVotes(plainText,certificate):
+	p1 = Votes(plainText=plainText, certificate=certificate):
+	p1.save()
+#--------------------------------
+def addChallengeStrings(challengeStr):
+	p1 = ChallengeStrings(challengeStr=challengeStr)
+	p1.save()
+#---------------------------------
+def addPublicKeys(publicKey):
+	p1 = PublicKeys(publicKey=publicKey)
+	p1.save()
+#---------------------------------
 def loginUser(username, password):
 	if username =='kayush' and password == 'kayush':
 		return True
@@ -90,4 +122,4 @@ def importElectionData(src):
 	stats = {'':''}
 	return stats
 #------------------------
-	
+
