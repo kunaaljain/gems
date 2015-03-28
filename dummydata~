@@ -1,5 +1,0 @@
-print "++++++++++++++______________________---------------------"
-from mainSite.databaseManager import addUser, addCandidate, addVotes, addChallengeStrings, addPublicKeys
-addUser('sudhanshu2013', False, 'cse' , 'sudhanshu', 'btech','qweqwrqwr');
-#addCandidate('sudhanshu2013', 'resides in umium hostel at room no a3-56', '/static/sudhanshu.jpg',' ');
-#addVotes('["yes",]')
