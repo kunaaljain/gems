@@ -3,5 +3,9 @@
 
 from mainSite.databaseManager import addUser, addCandidate, addVotes, addChallengeStrings, addPublicKeys
 addUser('kayush', False, 'cse' , 'Ayush', 'btech','qweqwrqwr');
-addCandidate('sudhanshu2013', 'resides in umium hostel at room no a3-56', '/static/sudhanshu.jpg',' ');
+addUser('adgfd', False, 'cse' , 'sdg', 'btech','sdghdf');
+addUser('Student1', False, 'cse' , 'Nice Name', 'mtech','password');
+addUser('Student2', False, 'cse' , 'Hiyaa', 'btech','hello world');
+addCandidate('Student1', 'resides in umium hostel at room no a3-56', '/static/sudhanshu.jpg',' ');
+addCandidate('adgfd', 'resides in umium hostel at room no a3-56', '/static/sudhanshu.jpg',' ');
 #addVotes('["yes",]')
