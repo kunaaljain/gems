@@ -32,7 +32,7 @@ class Votes(models.Model):
 	challengeStr = models.ForeignKey("ChallengeStrings")
 
 class ChallengeStrings(models.Model):
-	challengeStr = models.CharField(max_length = 2048)
+	challengeStr = models.CharField(max_length=2048)
 
 class PublicKeys(models.Model):
 	publicKey = models.CharField(max_length=2048)
