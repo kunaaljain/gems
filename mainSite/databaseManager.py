@@ -6,23 +6,29 @@ import json
 from models import User, Candidates,Votes, PublicKeys, ChallengeStrings 
  
 
-def addUser(username,voted,department,name,course,encryptedPrivateKey):
+def addUser(username, voted, department, name, course, password):
+	key = RSA.generate(2048).exportKey()
+	encryptedPrivateKey = cryptography.symmetricEncrypt(key, password)
 	p1 = User(username=username, voted=voted, department=department, name=name, course=course, encryptedPrivateKey=encryptedPrivateKey)
 	p1.save()
 	return True
 
 #---------------------------------
 def addCandidate(username,details,photo,approved):
-	if len(User.objects.all()) == 0:
+	if len(User.objects.filter(username=username)) == 0:
 		 return False
 	else:
+		assert(approved == False)
+		assert(len(details) != 0)
 		p1 = Candidates(username=username, details=details, photo=photo, approved=approved)
 		p1.save()
 		return True
+
 #---------------------------------
-def addVotes(plainText,certificate):
+def addVotes(plainText,username):
 	p1 = Votes(plainText=plainText, certificate=certificate)
 	p1.save()
+
 #--------------------------------
 def addChallengeStrings(challengeStr):
 	p1 = ChallengeStrings(challengeStr=challengeStr)

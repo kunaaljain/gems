@@ -7,11 +7,14 @@ class User(models.Model):
 	department = models.CharField(max_length=100)
 	name = models.CharField(max_length=50)
 	course = models.CharField(max_length=30)
-	encryptedPrivateKey = models.CharField(max_length=2048)
+	encryptedPrivateKey = models.CharField(max_length=4096)
+	'''Non empty only when user is logged in'''
+	plaintextPrivatekey = models.CharField(max_length=2048)
 	
 	def __unicode__(self):
         	return self.name
 
+#Create database for storing posts
 
 class Candidates(models.Model):
 	username = models.CharField(max_length=50)
@@ -20,9 +23,13 @@ class Candidates(models.Model):
 	approved = models.BooleanField()
 	def __unicode__(self):
         	return self.username
+
 class Votes(models.Model):
 	plainText = models.CharField(max_length=50)
 	certificate = models.CharField(max_length=60)
+
+	publicKey = models.ForeignKey("PublicKeys")
+	challengeStr = models.ForeignKey("ChallengeStrings")
 
 class ChallengeStrings(models.Model):
 	challengeStr = models.CharField(max_length = 2048)
