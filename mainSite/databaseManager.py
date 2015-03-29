@@ -60,10 +60,9 @@ def makeCandidate(username, details, photo, approved=False):
 		return True
 
 #---------------------------------
-'''def addVotes(plainText,username):
-	p1 = Votes(plainText=plainText, certificate=certificate)
-	p1.save()'''
-def addVotes(plainText, username, password):
+
+def registerVote(plainText, username, password):
+	"""Register plainText as the vote of user with given username and password"""
 	userlist = User.objects.filter(username=username)
 	if len(userlist) == 0:
 		return False
@@ -84,34 +83,12 @@ def addVotes(plainText, username, password):
 	p1.save()
 	return True
 
-#--------------------------------
-def addChallengeStrings(challengeStr):
-	p1 = ChallengeStrings(challengeStr=challengeStr)
-	p1.save()
-
-#---------------------------------
-def addPublicKeys(publicKey):
-	p1 = PublicKeys(publicKey=publicKey)
-	p1.save()
-
 #---------------------------------
 def loginUser(username, password):
 	if username =='kayush' and password == 'kayush':
 		return True
 	else:
 		return False
-#----------------------------------
-def registerVote(username,vote):
-	decoded = json.loads(vote)
-	var1 = decoded['vp']
-	var2 = decoded['welfare']
-	var3 = decoded['sport']
-	# by default i assign the value false to vated although it will come from database
-	voted = False
-	if voted != False:
-		return False
-	else:
-		return True
 
 #----------------------------------
 
