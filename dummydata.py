@@ -1,8 +1,14 @@
 # to run this file from cmmand line you will have to enter the following cammand
 # python manage.py shell < dummydata.py
 
+<<<<<<< HEAD
 from mainSite import databaseManager
 '''addUser('kayush', False, 'cse' , 'Ayush', 'btech','qweqwrqwr');
+=======
+from mainSite.databaseManager import addUser, addCandidate, addVotes, addChallengeStrings, addPublicKeys
+
+addUser('kayush', False, 'cse' , 'Ayush', 'btech','qweqwrqwr');
+>>>>>>> ef0c76940b176eb69b618a88f972a950471b88fb
 addUser('adgfd', False, 'cse' , 'sdg', 'btech','sdghdf');
 addUser('Student1', False, 'cse' , 'Nice Name', 'mtech','password');
 addUser('Student2', False, 'cse' , 'Hiyaa', 'btech','hello world');

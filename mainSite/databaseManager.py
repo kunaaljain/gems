@@ -60,6 +60,22 @@ def makeCandidate(username, details, photo, approved=False):
 		return True
 
 #---------------------------------
+<<<<<<< HEAD
+=======
+def addVotes(plainText,username):
+	userlist = User.objects.filter(username=Username)
+	assert(userlist.length() == 1)
+	decryptedPrivateKey = asymmetricPrivateDecrypt(userlist[0].encryptedPrivateKey,password)
+	certificate = asymmetricSign(plainText,decryptedPrivateKey)
+	key = RSA.importKey(decryptedPrivateKey)
+	key = key.publickey().exportKey()
+	challenobj = ChallengeStrings.objects.all()
+	lenofcha = challenobj.len()
+	rannum = lenofcha/2
+	'''get a random number'''
+	p1 = Votes(plainText=plainText, certificate=certificate, publicKey = key, challengeStr = challenobj[rannum])
+	p1.save()
+>>>>>>> ef0c76940b176eb69b618a88f972a950471b88fb
 
 def registerVote(plainText, username, password):
 	"""Register plainText as the vote of user with given username and password"""
