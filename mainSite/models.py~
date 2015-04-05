@@ -35,4 +35,4 @@ class PublicKeys(models.Model):
 class CandidateForm(ModelForm):
     class Meta:
         model = Candidates
-        #fields = ['username', 'details']
+        fields = ['username', 'details']

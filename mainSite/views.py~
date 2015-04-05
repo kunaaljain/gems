@@ -17,7 +17,7 @@ def register(request):
 		if form.is_valid():
 		    form.save()
 		    data = form.CharField(label = 'Username')
-		    return HttpResponse(json.dumps(data), content_type="application/json")
+		    return HttpResponse(json.dumps(form.__dict__), content_type="application/json")
 		    #return HttpResponseRedirect('/main')
 		else:
 		    return HttpResponse('error in registration')
