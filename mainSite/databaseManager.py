@@ -1,54 +1,91 @@
-#this is the dummy database connecting python file for helping the UI/UX guys
-#~/bin/kayush/python/databaseManager.py
 import os,sys
 import json
+from Crypto.PublicKey import RSA
 
 from models import User, Candidates,Votes, PublicKeys, ChallengeStrings 
- 
+import cryptography
 
-def addUser(username,voted,department,name,course,encryptedPrivateKey):
+def registerUsers(userList):
+	"""Registers a new set of users as specified in userList. 
+
+	Should be called with a large number of users for good security (prefferably all that will ever be in the system.)
+
+	userList -- list of dictionaries each depicting a user with the keys: 
+		'username', 'department', 'name', 'course'
+
+	returns a list of passwords corresponding to each user"""
+
+	noUsers = len(userList)
+	passwords = [cryptography.generatePrintableRandomString() for i in range(noUsers)]
+	
+	publicKeys = []
+	for i in range(noUsers):
+		challengeStr = cryptography.generateRandomString(128)
+		newChallengeStr = ChallengeStrings(challengeStr=challengeStr)
+		newChallengeStr.save()
+
+		newPublicKey = addUser(userList[i]['username'], userList[i]['department'], userList[i]['name'], userList[i]['course'], passwords[i])
+
+		publicKeys += [newPublicKey]
+
+	cryptography.permuteList(publicKeys)
+	for i in range(len(publicKeys)):
+		newPublicKey = PublicKeys(publicKey=publicKeys[i])
+		newPublicKey.save()
+
+	return passwords
+
+def addUser(username, department, name, course, password, voted=False):
+	'''Registers new user with the system including signature key generation and registration'''
+	#generate private key
+	key = RSA.generate(2048)
+	encryptedPrivateKey = cryptography.symmetricEncrypt(key.exportKey(), password)
+
 	p1 = User(username=username, voted=voted, department=department, name=name, course=course, encryptedPrivateKey=encryptedPrivateKey)
 	p1.save()
-	return True
+	return key.publickey().exportKey()
 
 #---------------------------------
-def addCandidate(username,details,photo,approved):
-	if len(User.objects.all()) == 0:
+def makeCandidate(username, details, photo, approved=False):
+	if len(User.objects.filter(username=username)) == 0:
 		 return False
 	else:
+		assert(len(User.objects.filter(username=username)) == 1)
+		assert(approved == False)
+		assert(len(details) != 0)
 		p1 = Candidates(username=username, details=details, photo=photo, approved=approved)
 		p1.save()
 		return True
+
 #---------------------------------
-def addVotes(plainText,certificate):
-	p1 = Votes(plainText=plainText, certificate=certificate)
+def registerVote(plainText, username, password):
+	"""Register plainText as the vote of user with given username and password"""
+	userlist = User.objects.filter(username=username)
+	if len(userlist) == 0:
+		return False
+	assert(len(userlist) == 1)
+	decryptedPrivateKey = cryptography.symmetricDecrypt(userlist[0].encryptedPrivateKey,password)
+	
+	certificate = cryptography.asymmetricSign(plainText,decryptedPrivateKey)
+	key = RSA.importKey(decryptedPrivateKey)
+	key = key.publickey().exportKey()
+	assert(len(PublicKeys.objects.filter(publicKey=key)) == 1)
+	publicKey = PublicKeys.objects.filter(publicKey=key)[0]
+
+	challenobj = ChallengeStrings.objects.all()
+	lenofcha = len(challenobj)
+	rannum = lenofcha/2
+	'''get a random number'''
+	p1 = Votes(plainText=plainText, certificate=certificate, publicKey=publicKey, challengeStr = challenobj[rannum])
 	p1.save()
-#--------------------------------
-def addChallengeStrings(challengeStr):
-	p1 = ChallengeStrings(challengeStr=challengeStr)
-	p1.save()
-#---------------------------------
-def addPublicKeys(publicKey):
-	p1 = PublicKeys(publicKey=publicKey)
-	p1.save()
+	return True
+
 #---------------------------------
 def loginUser(username, password):
 	if username =='kayush' and password == 'kayush':
 		return True
 	else:
 		return False
-#----------------------------------
-def registerVote(username,vote):
-	decoded = json.loads(vote)
-	var1 = decoded['vp']
-	var2 = decoded['welfare']
-	var3 = decoded['sport']
-	# by default i assign the value false to vated although it will come from database
-	voted = False
-	if voted != False:
-		return False
-	else:
-		return True
 
 #----------------------------------
 
