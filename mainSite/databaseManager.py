@@ -2,8 +2,9 @@ import os
 import sys
 import json
 from Crypto.PublicKey import RSA
+from django.contrib.auth.models import User
 
-from models import User, Candidates,Votes, PublicKeys, ChallengeStrings
+from models import Users, Candidates,Votes, PublicKeys, ChallengeStrings
 import cryptography
 
 def registerUsers(userList):
@@ -29,6 +30,8 @@ def registerUsers(userList):
 		newPublicKey = addUser(userList[i]['username'], userList[i]['department'], userList[i]['name'], userList[i]['course'], passwords[i])
 
 		publicKeys += [newPublicKey]
+		user = User.objects.create_user(username = userList[i]['username'], password = passwords[i])
+		user.save()
 
 	cryptography.permuteList(publicKeys)
 	for i in range(len(publicKeys)):
@@ -43,16 +46,16 @@ def addUser(username, department, name, course, password, voted=False):
 	key = RSA.generate(2048)
 	encryptedPrivateKey = cryptography.symmetricEncrypt(key.exportKey(), password)
 
-	p1 = User(username=username, voted=voted, department=department, name=name, course=course, encryptedPrivateKey=encryptedPrivateKey)
+	p1 = Users(username=username, voted=voted, department=department, name=name, course=course, encryptedPrivateKey=encryptedPrivateKey)
 	p1.save()
 	return key.publickey().exportKey()
 
 #---------------------------------
 def makeCandidate(username, details, photo, approved=False):
-	if len(User.objects.filter(username=username)) == 0:
+	if len(Users.objects.filter(username=username)) == 0:
 		 return False
 	else:
-		assert(len(User.objects.filter(username=username)) == 1)
+		assert(len(Users.objects.filter(username=username)) == 1)
 		assert(approved == False)
 		assert(len(details) != 0)
 		p1 = Candidates(username=username, details=details, photo=photo, approved=approved)
@@ -62,7 +65,7 @@ def makeCandidate(username, details, photo, approved=False):
 #---------------------------------
 def registerVote(plainText, username, password):
 	"""Register plainText as the vote of user with given username and password"""
-	userlist = User.objects.filter(username=username)
+	userlist = Users.objects.filter(username=username)
 	#print len(userlist)
 	if (len(userlist) == 0):
 		return False

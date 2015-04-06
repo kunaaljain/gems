@@ -2,7 +2,7 @@ from django.db import models
 from django.forms import ModelForm
 
 # Create your models here.
-class User(models.Model):
+class Users(models.Model):
 	username = models.CharField(max_length=50)
 	voted = models.BooleanField()
 	department = models.CharField(max_length=100)
@@ -38,11 +38,6 @@ class ChallengeStrings(models.Model):
 
 class PublicKeys(models.Model):
 	publicKey = models.CharField(max_length=2048)
-
-class CandidateForm(ModelForm):
-    class Meta:
-        model = Candidates
-        #fields = ['username', 'details']
 
 class New_Candidate(models.Model):
 	name = models.CharField(max_length=50)

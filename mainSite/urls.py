@@ -6,7 +6,8 @@ from mainSite import views
 urlpatterns = patterns('',
 	url(r'^register', views.register),
 	url(r'^view$', views.view_candidate),
-	url(r'^$', views.logged),
+	url(r'^voterHome$', views.voterHome),
 	url(r'^view/(?P<candidateName>[-\w]+)/$',views.candidateView , name = 'candidatePage'),
-	(r'^add_candidate/$', views.add_candidate),
-)
+	url(r'^add_candidate$', views.add_candidate),
+    url(r'^login$', views.user_login, name='login')
+ )

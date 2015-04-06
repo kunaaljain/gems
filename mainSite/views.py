@@ -6,9 +6,31 @@ from django.template import RequestContext, loader, Context
 from django.http import HttpResponseRedirect
 from django.core.context_processors import csrf
 from .databaseManager import getCandidateDetail
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 
-# Create your views here.
-def logged(request):
+def user_login(request):                      #url for login page is home/login
+    if request.method == 'POST':
+    	username= request.POST.get('username')
+    	password = request.POST.get('password')
+    	user = authenticate(username=username,password=password)
+    	if user:
+    	    if (user.is_active and user.is_staff):
+    	        login(request, user)
+    	        return HttpResponseRedirect('/gems/admin')
+    	    else:
+                login(request, user)
+                return HttpResponseRedirect('/gems/voterHome')
+    	else:
+    	    return HttpResponse("your account is diabled")		
+    else:
+        # No context variables to pass to the template system, hence the
+        # blank dictionary object...
+        return render(request, 'login.html', {})		
+    return render(request, 'index.html', context_dict)
+
+@login_required
+def voterHome(request):
 	return render(request, 'main_page.html')
 
 def view_candidate(request):
