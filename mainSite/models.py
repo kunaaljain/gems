@@ -23,7 +23,6 @@ class Candidates(models.Model):
 	details = models.CharField(max_length=10000)
 	photo = models.CharField(max_length=100)
 	approved = models.BooleanField()
-
 	def __unicode__(self):
         	return self.username
 
@@ -39,19 +38,6 @@ class ChallengeStrings(models.Model):
 
 class PublicKeys(models.Model):
 	publicKey = models.CharField(max_length=2048)
-
-
-# more fields to be added 
-
-class Posts(models.Model):
-	postName = models.CharField(max_length=50)
-	postCount = models.IntegerField(max_length=3)
-	voterGender = models.CharField(max_length=1)    #'M'/'F'/'any'
-	voterCourse = models.CharField(max_length=2)		# 'UG'/'PG'/'any'
-	eligibleGender = models.CharField(max_length=1)		#'M'/'F'/'any'
-	eligibleCourse = models.CharField(max_length=2)     #'UG'/"PG"/'any'
-	eligibleYear = models.CharField(max_length=2)		#minimum requirement of year
-
 
 class New_Candidate(models.Model):
 	name = models.CharField(max_length=50)

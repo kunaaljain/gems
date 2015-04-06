@@ -1,9 +1,10 @@
 import os
 import sys
 import json
-from django.contrib.auth.models import User
-from .models import User, Candidates,Votes, PublicKeys, ChallengeStrings ,Posts
 from Crypto.PublicKey import RSA
+from django.contrib.auth.models import User
+
+from models import Users, Candidates,Votes, PublicKeys, ChallengeStrings
 import cryptography
 
 def registerUsers(userList):
@@ -44,6 +45,7 @@ def addUser(username, department, name, course, password, voted=False):
 	#generate private key
 	key = RSA.generate(2048)
 	encryptedPrivateKey = cryptography.symmetricEncrypt(key.exportKey(), password)
+
 	p1 = Users(username=username, voted=voted, department=department, name=name, course=course, encryptedPrivateKey=encryptedPrivateKey)
 	p1.save()
 	return key.publickey().exportKey()
@@ -160,48 +162,11 @@ def importElectionData(src):
 	stats = {'':''}
 	return stats
 #------------------------
-
-def getPosts():
-	postList = Posts.objects.all()
-	postDetailsList = []
-	for post in postList :
-		print(post.postName)
-		#postDetails{'postName':post.postName,'postCount':post.postCount,'voterGender':post.voterGender,'voterCourse':post.voterCourse}
-		postDetails = post.postName,post.postCount,post.voterGender,post.voterCourse
-		postDetailsList.append(postDetails)
-	return postDetailsList
-
-#--------------------------
-
-def addPost(postName,postCount,voterGender,voterCourse):
-	p = Posts(postName=postName,voterGender=voterGender,voterCourse=voterCourse)
-	p.save()
-	return True
-
-#---------------------------
-
-def getCandidatesList():
-	candidatesObj = Candidates.objects.all()
-	candidatesList = []
-	for item in candidatesObj :
-		candidateTuple = (item.username,item.details,item.photo,item.approved)
-		candidatesList.append(candidateTuple)
-		print(candidateTuple)
-
-	return candidatesList
-
-#-----------------------------
-
-#def getEligiblility(post):
-	
-
-
-#def isEligible(candidate,post):
-
 def verifyVote(votes):
 	"""Verifies all votes"""
 	for vote in votes:
 		value = cryptography.asymmetricVerify(vote.plainText, vote.certificate, vote.publicKey.publicKey)
 		if value == False:
-			print(error)			
+			print error
+			return value
 	return value
