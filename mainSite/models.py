@@ -7,10 +7,11 @@ class User(models.Model):
 	department = models.CharField(max_length=100)
 	name = models.CharField(max_length=50)
 	course = models.CharField(max_length=30)
+	hostel = models.CharField(max_length=30)
 	encryptedPrivateKey = models.CharField(max_length=4096)
 	'''Non empty only when user is logged in'''
 	plaintextPrivatekey = models.CharField(max_length=2048)
-	
+
 	def __unicode__(self):
         	return self.name
 
