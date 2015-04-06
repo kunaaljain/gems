@@ -2,9 +2,12 @@ from Crypto.Cipher import AES, PKCS1_OAEP
 from Crypto.Signature import PKCS1_PSS
 from Crypto.Hash import SHA
 from Crypto import Random
+from Crypto.Random.random import StrongRandom
 from Crypto.PublicKey import RSA
 import binascii
 
+cryptoRNG = Random.new() #random number generator
+strongRandom = StrongRandom()
 '''---------------The Encryption Abstraction----------------'''
 
 constPadString = u"dkgh;slfdkgukrjfdkgh;slfdkgukrjf"
@@ -30,8 +33,8 @@ def symmetricDecrypt(inpString, key):
 	msg = cipher.decrypt(inpString)
 	return msg[16:]
 
-def asymmetricPublicEncrypt(inpString, key):	
-	symKey = binascii.b2a_base64(Random.new().read(128))
+def asymmetricPublicEncrypt(inpString, key):
+	symKey = binascii.b2a_base64(cryptoRNG.read(128))
 	cipher = PKCS1_OAEP.new(RSA.importKey(key))
 	ct = binascii.b2a_base64(cipher.encrypt(symKey)) + symmetricEncrypt(inpString, symKey)
 	#print len(binascii.b2a_base64(cipher.encrypt(symKey))), ct
@@ -48,7 +51,7 @@ maxRSACiphertextLength = 345 #Given largest feasible plaintext, this is the leng
 
 def asymmetricSign(message, key):
 	"""Returns a signature of inpString signed with 'key'."""
-	key = RSA.importKey(key)	
+	key = RSA.importKey(key)
 	h = SHA.new()
 	h.update(message)
 	signer = PKCS1_PSS.new(key)
@@ -63,8 +66,22 @@ def asymmetricVerify(message, signature, key):
 	signature = binascii.a2b_base64(signature)
 	return verifier.verify(h, signature)
 
-'''
+#########Miscellaneous Utility Functions#############
+def generateRandomString(len):
+	return binascii.b2a_base64(cryptoRNG.read(len))
+
+def generatePrintableRandomString():
+	'''Returns a string suitable to be used as a password.
+
+	Currently does not support the ability to generate a string of arbitrary length'''
+	return binascii.b2a_hex(cryptoRNG.read(10))
+
+def permuteList(lst):
+	return strongRandom.shuffle(lst)
+
+
 #Test code for this module. Uncomment to test
+'''
 key = RSA.generate(2048)
 certificate = asymmetricSign("Hello world", key.exportKey())
 print len(certificate)
