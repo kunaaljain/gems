@@ -11,19 +11,19 @@ from .databaseManager import getCandidateDetail,addCandidate
 def logged(request):
 	return render(request, 'main_page.html')
 
-def register(request):
+"""def register(request):
 	if request.method == 'POST':
 		form = CandidateForm(request.POST)
 		if form.is_valid():
 		    form.save()
-		    data = form.CharField(label = 'Username')
-		    return HttpResponse(json.dumps(form.__dict__), content_type="application/json")
-		    #return HttpResponseRedirect('/main')
+		    #data = form.CharField(label = 'Username')
+		    #return HttpResponse(json.dumps(data), content_type="application/json")
+		    return HttpResponseRedirect('/main')
 		else:
 		    return HttpResponse('error in registration')
     	else:
         	form = CandidateForm()
-    	return render_to_response('registration_form.html',{'form': form}, context_instance=RequestContext(request))
+    	return render_to_response('registration_form.html',{'form': form}, context_instance=RequestContext(request))"""
 
 def view_candidate(request):
     	candidate_i = Candidates.objects.all()
@@ -37,4 +37,19 @@ def candidateView(request,candidateName):
 	contextObj = Context({'candidateName':candidateName,'candidateDetails':candidateDetails})
 	return render_to_response('test.html',contextObj)
 
+def register(request):
+	return render(request, 'search_form.html')
 
+def search(request):
+    """if request.GET:
+        message = '%r' % request.GET['optionsRadios'] + '%r' % request.GET['name'] + '%r' % request.GET['roll'] + '%r' % request.GET['dept'] + '%r' % request.GET['cpi']  + '%r' % request.GET['sem'] + '%r' % request.GET['back'] + '%r' % request.GET['email'] + '%r' % request.GET['contact'] + '%r' % request.GET['hostel'] + '%r' % request.GET['room'] + '%r' % request.GET['agenda']
+    else:
+        message = 'You submitted an empty form.'
+    return HttpResponse(json.dumps(message), content_type="application/json")"""
+	tour = get_object_or_404(Tour, pk=1)
+	if (request.method == POST) and ("subscribe" in request.POST):
+		tour.subscribers.add(user) 
+		tour.save()
+			# Send a Success Message to the User
+	else:
+			# Do something in case of a GET request

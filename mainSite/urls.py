@@ -8,4 +8,6 @@ urlpatterns = patterns('',
 	url(r'^view$', views.view_candidate),
 	url(r'^$', views.logged),
 	url(r'^view/(?P<candidateName>[-\w]+)/$',views.candidateView , name = 'candidatePage'),
+	#url(r'^search-form/$', views.search_form),
+	(r'^search/$', views.search),
 )
