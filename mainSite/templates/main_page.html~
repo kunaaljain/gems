@@ -1,0 +1,5 @@
+{% extends "blank-page.html" %}
+{% block content %}
+<p><a href="register/">Register</a></p>
+<p><a href="view/">View Candidates</a></p>
+{% endblock %}

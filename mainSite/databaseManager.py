@@ -122,7 +122,7 @@ def approveCandidate(username):
 #------------------------
 
 def getCandidateDetail(username):
-	detail = {'username':'sudhanshu', 'post':'vp', 'picture':'sudhanshu.jpg','form-data':{'agenda':'my agenda', 'position-of-responsibility':'Director of IITG' }}
+	details = {'username':'sudhanshu', 'post':'vp', 'picture':'sudhanshu.jpg','form-data':{'agenda':'my agenda', 'position-of-responsibility':'Director of IITG' }}
 	return details
 
 #----------------------

@@ -1,0 +1,102 @@
+{% extends "blank-page.html" %}
+{% block content %}
+<form action="/main/add_candidate/" method="get">
+	<div class="form-group">
+		<label>Post Contesting For:</label>
+		<div class="radio">
+		    <label>
+		        <input type="radio" name="optionsRadios" id="optionsRadios1" value="vp" checked>Vice President
+		    </label>
+		</div>
+		<div class="radio">
+		    <label>
+		        <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">Welfare Secretary
+		    </label>
+		</div>
+		<div class="radio">
+		    <label>
+		        <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">Technical Secretary
+		    </label>
+		</div>
+		<div class="radio">
+		    <label>
+		        <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">Sports Secretary
+		    </label>
+		</div>
+		<div class="radio">
+		    <label>
+		        <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">Cultural Secretary
+		    </label>
+		</div>
+		<div class="radio">
+		    <label>
+		        <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">UG-Senator
+		    </label>
+		</div>
+		<div class="radio">
+		    <label>
+		        <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">PG-Senator
+		    </label>
+		</div>
+		<div class="radio">
+		    <label>
+		        <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">Girls Senator
+		    </label>
+		</div>
+	</div>
+	<h3>Candidate Details:</h3>
+	<div class="form-group">
+                <label>Name</label>
+                <input class="form-control" placeholder="Enter name" name="name" type="text" required>
+            </div>
+	<div class="form-group">
+                <label>Roll No.</label>
+                <input class="form-control" placeholder="Ex: 130101028" name="roll" type="text" required>
+            </div>
+	<div class="form-group">
+                <label>Department/Branch</label>
+                <input class="form-control" placeholder="Write full name of department. Ex: Computer Science and Engineering" name="dept" type="text" required>
+            </div>
+	<div class="form-group">
+                <label>CPI</label>
+                <input class="form-control" placeholder="Ex: 7.60" name="cpi" type="text" required>
+            </div>
+	<div class="form-group">
+                <label>Semester</label>
+                <input class="form-control" placeholder="Ex: 4" name="sem" type="text" required>
+            </div>
+	<div class="form-group">
+                <label>Active Backlogs(If any)</label>
+                <input class="form-control" placeholder="Write only if you have active backlogs" name="back" type="text">
+            </div>
+	<div class="form-group">
+                <label>Email ID</label>
+                <input class="form-control" placeholder="IITG email id" name="email" type="email" required>
+            </div>
+	<div class="form-group">
+                <label>Contact No.</label>
+                <input class="form-control" placeholder="Enter mobile number" name="contact" type="text" required>
+            </div>
+	<div class="form-group">
+                <label>Hostel</label>
+                <input class="form-control" placeholder="" name="hostel" type="text" required>
+            </div>
+	<div class="form-group">
+                <label>Room No.</label>
+                <input class="form-control" placeholder="" name="room" type="text" required>
+            </div>
+	<div class="form-group">
+                <label>Upload Agenda</label>
+                <input type="text" name = "agenda" required>
+            </div>
+	<h4>Declaration by the candidate:</h4>
+	<p>I hereby declare that the above information is to the best of my knowledge. I do not have any disciplinary probation by the institute. I know that any false information in this nomination form will lead to cancellation of my nomination and disciplinary action.</p>
+	<div class="checkbox">
+            <label>
+                <input type="checkbox" name="agree" value="agree" required>I agree
+            </label>
+        </div>
+	<button type="submit" class="btn btn-default">Submit Button</button>
+        <button type="reset" class="btn btn-default">Reset Button</button>
+</form>
+{% endblock %}

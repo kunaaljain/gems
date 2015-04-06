@@ -20,8 +20,9 @@ def view_candidate(request):
 
 def candidateView(request,candidateName):
 	b = New_Candidate.objects.get(name=candidateName)
+	new_object = b.objects()
 	data = {
-		"detail" : b
+		"detail" : new_object
 	}
 	#candidateDetails = getCandidateDetail(candidateName)
 	#contextObj = Context({'candidateName':candidateName,'candidateDetails':candidateDetails})

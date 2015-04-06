@@ -1,0 +1,16 @@
+{% extends "blank-page.html" %}
+{% block content %}
+<h3>{{detail.name}}</h3>
+<h5>Roll No: {{detail.roll}}<h5>
+<h5>Post contesting For: {{detail.post}}<h5>
+<h5>Department: {{detail.dept}}<h5>
+<h5>CPI: {{detail.cpi}}<h5>
+<h5>Semester: {{detail.sem}}<h5>
+<h5>Active Backlogs: {{detail.back}}<h5>
+<h5>Email: {{detail.email}}<h5>
+<h5>Contact: {{detail.contact}}<h5>
+<h5>Hostel: {{detail.hostel}}<h5>
+<h5>Room No: {{detail.room}}<h5>
+<h5>Agenda:<h5>
+<p>{{detail.post}}</p>
+{% endblock %}

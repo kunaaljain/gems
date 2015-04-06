@@ -38,6 +38,7 @@ class ChallengeStrings(models.Model):
 
 class PublicKeys(models.Model):
 	publicKey = models.CharField(max_length=2048)
+<<<<<<< HEAD
 
 class CandidateForm(ModelForm):
     class Meta:
@@ -59,3 +60,5 @@ class New_Candidate(models.Model):
 	agenda = models.CharField(max_length=100000, default='')
 	def __unicode__(self):
         	return self.name
+=======
+>>>>>>> 9fc888010cf8060f608fadcad6eff369c81530d1
