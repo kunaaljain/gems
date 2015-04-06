@@ -79,8 +79,9 @@ def generatePrintableRandomString():
 def permuteList(lst):
 	return strongRandom.shuffle(lst)
 
-'''
+
 #Test code for this module. Uncomment to test
+'''
 key = RSA.generate(2048)
 certificate = asymmetricSign("Hello world", key.exportKey())
 print len(certificate)

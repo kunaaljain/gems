@@ -1,4 +1,5 @@
-import os,sys
+import os
+import sys
 import json
 from Crypto.PublicKey import RSA
 
@@ -13,7 +14,8 @@ def registerUsers(userList):
 	userList -- list of dictionaries each depicting a user with the keys:
 		'username', 'department', 'name', 'course'
 
-	returns a list of passwords corresponding to each user"""
+	returns a list of passwords corresponding to each user
+	"""
 
 	noUsers = len(userList)
 	passwords = [cryptography.generatePrintableRandomString() for i in range(noUsers)]
@@ -132,7 +134,7 @@ def setCandidateDetails(username):
 	return detail
 #----------------------
 def getElectionState(state):
-	if state ==0:
+	if state == 0:
 		var = 'pre-election'
 	elif state == 1:
 		var = 'during election'
@@ -141,12 +143,12 @@ def getElectionState(state):
 	return var
 #-----------------------------
 def setElectionState(state):
-        if state ==0:
-                var = 'pre-election'
-        elif state == 1:
-                var = 'during election'
-        else:
-                var = 'post-election'
+    if state == 0:
+        var = 'pre-election'
+    elif state == 1:
+        var = 'during election'
+    else:
+        var = 'post-election'
 #-------------------------
 def getCandidatePost(postId):
 	post = {'vp':{'candidate1':'Ayush ', 'Candidate2':'Sudhanshu'}, 'welfare':{'candidate1':'Ayush ', 'Candidate2':'Sudhanshu'}, 'sport':{'candidate1':'Ayush ', 'Candidate2':'Sudhanshu'}}
@@ -157,10 +159,8 @@ def importElectionData(src):
 	stats = {'':''}
 	return stats
 #------------------------
-def verifyvote(votes):
-	"""
-	Verifies all votes
-	"""
+def verifyVote(votes):
+	"""Verifies all votes"""
 	for vote in votes:
 		value = cryptography.asymmetricVerify(vote.plainText, vote.certificate, vote.publicKey.publicKey)
 		if value == False:
