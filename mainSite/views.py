@@ -2,7 +2,7 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from django.template import RequestContext, loader,Template,Context
-from .databaseManager import getCandidateDetail,getCandidatesList,addCandidate
+from .databaseManager import getCandidateDetail,getCandidatesList
 
 #import database fields
 from mainSite.models import User, Candidates,Votes, PublicKeys, ChallengeStrings , Posts
@@ -33,8 +33,7 @@ def candidateView(request,candidateName):
 	return render_to_response('test.html',contextObj)
 
 def candidatesListView(request):
-	addCandidate('nik','blahblah','photo','approved')
-	addCandidate('sldjfljs','details','photo','approved')
+	
 	candidatesList = getCandidatesList()
 	contextObj = Context({'candidatesList':candidatesList})
 	return render_to_response('candidates.html',contextObj)

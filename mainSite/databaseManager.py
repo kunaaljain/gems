@@ -1,13 +1,9 @@
 import os
 import sys
 import json
-from Crypto.PublicKey import RSA
+#from Crypto.PublicKey import RSA
 
-<<<<<<< HEAD
 from .models import User, Candidates,Votes, PublicKeys, ChallengeStrings ,Posts
- 
-=======
-from models import User, Candidates,Votes, PublicKeys, ChallengeStrings
 import cryptography
 
 def registerUsers(userList):
@@ -44,10 +40,8 @@ def registerUsers(userList):
 def addUser(username, department, name, course, password, voted=False):
 	'''Registers new user with the system including signature key generation and registration'''
 	#generate private key
-	key = RSA.generate(2048)
+	#key = RSA.generate(2048)
 	encryptedPrivateKey = cryptography.symmetricEncrypt(key.exportKey(), password)
->>>>>>> 9fc888010cf8060f608fadcad6eff369c81530d1
-
 	p1 = User(username=username, voted=voted, department=department, name=name, course=course, encryptedPrivateKey=encryptedPrivateKey)
 	p1.save()
 	return key.publickey().exportKey()
@@ -75,7 +69,7 @@ def registerVote(plainText, username, password):
 	decryptedPrivateKey = cryptography.symmetricDecrypt(userlist[0].encryptedPrivateKey,password)
 
 	certificate = cryptography.asymmetricSign(plainText,decryptedPrivateKey)
-	key = RSA.importKey(decryptedPrivateKey)
+	#key = RSA.importKey(decryptedPrivateKey)
 	key = key.publickey().exportKey()
 	assert(len(PublicKeys.objects.filter(publicKey=key)) == 1)
 	publicKey = PublicKeys.objects.filter(publicKey=key)[0]
@@ -164,7 +158,6 @@ def importElectionData(src):
 	stats = {'':''}
 	return stats
 #------------------------
-<<<<<<< HEAD
 
 def getPosts():
 	postList = Posts.objects.all()
@@ -203,13 +196,10 @@ def getCandidatesList():
 
 #def isEligible(candidate,post):
 
-=======
 def verifyVote(votes):
 	"""Verifies all votes"""
 	for vote in votes:
 		value = cryptography.asymmetricVerify(vote.plainText, vote.certificate, vote.publicKey.publicKey)
 		if value == False:
-			print error
-			return value
+			print(error)			
 	return value
->>>>>>> 9fc888010cf8060f608fadcad6eff369c81530d1
