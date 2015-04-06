@@ -42,3 +42,19 @@ class CandidateForm(ModelForm):
     class Meta:
         model = Candidates
         #fields = ['username', 'details']
+
+class New_Candidate(models.Model):
+	name = models.CharField(max_length=50)
+	post = models.CharField(max_length=4 ,default='')
+	roll = models.IntegerField(max_length=10, default='')
+	department = models.CharField(max_length=100, default='')
+	cpi = models.FloatField(max_length=4, default='')
+	sem = models.IntegerField(max_length=1, default='')
+	backlogs = models.CharField(max_length=50, default='')
+	email = models.CharField(max_length=50, default='')
+	contact = models.IntegerField(max_length=10, default='')
+	hostel = models.CharField(max_length=10,default='')
+	room = models.CharField(max_length=10, default='')
+	agenda = models.CharField(max_length=100000, default='')
+	def __unicode__(self):
+        	return self.name

@@ -87,7 +87,7 @@
             </div>
 	<div class="form-group">
                 <label>Upload Agenda</label>
-                <input type="file" name = "agenda" required>
+                <input type="text" name = "agenda" required>
             </div>
 	<h4>Declaration by the candidate:</h4>
 	<p>I hereby declare that the above information is to the best of my knowledge. I do not have any disciplinary probation by the institute. I know that any false information in this nomination form will lead to cancellation of my nomination and disciplinary action.</p>
@@ -98,7 +98,5 @@
         </div>
 	<button type="submit" class="btn btn-default">Submit Button</button>
         <button type="reset" class="btn btn-default">Reset Button</button>
-        <input type="text" name="q">
-        <input type="submit" value="Search">
 </form>
 {% endblock %}
