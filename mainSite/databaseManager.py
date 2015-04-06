@@ -3,7 +3,7 @@
 import os,sys
 import json
 
-from models import User, Candidates,Votes, PublicKeys, ChallengeStrings 
+from .models import User, Candidates,Votes, PublicKeys, ChallengeStrings ,Posts
  
 
 def addUser(username,voted,department,name,course,encryptedPrivateKey):
@@ -82,7 +82,7 @@ def approveCandidate(username):
 #------------------------
 
 def getCandidateDetail(username):
-	detail = {'username':'sudhanshu', 'post':'vp', 'picture':'sudhanshu.jpg','form-data':{'agenda':'my agenda', 'position-of-responsibility':'Director of IITG' }}
+	details = {'username':'sudhanshu', 'post':'vp', 'picture':'sudhanshu.jpg','form-data':{'agenda':'my agenda', 'position-of-responsibility':'Director of IITG' }}
 	return details
 
 #----------------------
@@ -119,4 +119,41 @@ def importElectionData(src):
 	stats = {'':''}
 	return stats
 #------------------------
+
+def getPosts():
+	postList = Posts.objects.all()
+	postDetailsList = []
+	for post in postList :
+		print(post.postName)
+		#postDetails{'postName':post.postName,'postCount':post.postCount,'voterGender':post.voterGender,'voterCourse':post.voterCourse}
+		postDetails = post.postName,post.postCount,post.voterGender,post.voterCourse
+		postDetailsList.append(postDetails)
+	return postDetailsList
+
+#--------------------------
+
+def addPost(postName,postCount,voterGender,voterCourse):
+	p = Posts(postName=postName,voterGender=voterGender,voterCourse=voterCourse)
+	p.save()
+	return True
+
+#---------------------------
+
+def getCandidatesList():
+	candidatesObj = Candidates.objects.all()
+	candidatesList = []
+	for item in candidatesObj :
+		candidateTuple = (item.username,item.details,item.photo,item.approved)
+		candidatesList.append(candidateTuple)
+		print(candidateTuple)
+
+	return candidatesList
+
+#-----------------------------
+
+#def getEligiblility(post):
+	
+
+
+#def isEligible(candidate,post):
 

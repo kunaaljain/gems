@@ -1,0 +1,18 @@
+{% block content %}
+<h1> django double sucks! </h1>
+total no of votes is {{ NoOfVotes }}
+{% for item in stats %}
+	<h1> Post name : {{ item.0 }} </h1>
+	No of posts : {{ item.1 }} <br>
+	No of candidates : {{ item.2 }} <br>
+	{% for candidate in item.3 %}
+		Candidate Name : {{candidate.0}}<br>
+		No of votes : {{candidate.1}}<br>
+		Candidate Link : {{candidate.2}}<br>
+	{% endfor %}
+
+{% endfor %}
+<a href="/mainsite/test/">candidate page</a>
+
+{% endblock %}
+
