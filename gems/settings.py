@@ -13,7 +13,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 #XYZNOTE
-TEMPLATE_DIRS = (os.path.join(BASE_DIR, "mainSite/templates"),)
+TEMPLATE_DIRS = (os.path.join(BASE_DIR, "mainSite"),)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -86,4 +86,10 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR,"mainSite/static/"),
+     os.path.join(BASE_DIR, "static"),
+    '/var/www/static/',
     )
+   
+
+# auth
+LOGIN_URL = '/gems/login'

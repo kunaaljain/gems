@@ -1,7 +1,8 @@
 from django.db import models
+from django.forms import ModelForm
 
 # Create your models here.
-class User(models.Model):
+class Users(models.Model):
 	username = models.CharField(max_length=50)
 	voted = models.BooleanField()
 	department = models.CharField(max_length=100)
@@ -39,6 +40,7 @@ class ChallengeStrings(models.Model):
 class PublicKeys(models.Model):
 	publicKey = models.CharField(max_length=2048)
 
+
 # more fields to be added 
 
 class Posts(models.Model):
@@ -50,3 +52,19 @@ class Posts(models.Model):
 	eligibleCourse = models.CharField(max_length=2)     #'UG'/"PG"/'any'
 	eligibleYear = models.CharField(max_length=2)		#minimum requirement of year
 
+
+class New_Candidate(models.Model):
+	name = models.CharField(max_length=50)
+	post = models.CharField(max_length=4 ,default='')
+	roll = models.IntegerField(max_length=10, default='')
+	department = models.CharField(max_length=100, default='')
+	cpi = models.FloatField(max_length=4, default='')
+	sem = models.IntegerField(max_length=1, default='')
+	backlogs = models.CharField(max_length=50, default='')
+	email = models.CharField(max_length=50, default='')
+	contact = models.IntegerField(max_length=10, default='')
+	hostel = models.CharField(max_length=10,default='')
+	room = models.CharField(max_length=10, default='')
+	agenda = models.CharField(max_length=100000, default='')
+	def __unicode__(self):
+        	return self.name

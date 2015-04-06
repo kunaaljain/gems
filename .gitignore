@@ -52,3 +52,11 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# DB file
+db.sqlite3
+
+# pyc file
+*.pyc
+*.py~
+*.html~
