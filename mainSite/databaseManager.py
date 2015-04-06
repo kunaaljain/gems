@@ -1,23 +1,25 @@
-import os,sys
+import os
+import sys
 import json
 from Crypto.PublicKey import RSA
 
-from models import User, Candidates,Votes, PublicKeys, ChallengeStrings 
+from models import User, Candidates,Votes, PublicKeys, ChallengeStrings
 import cryptography
 
 def registerUsers(userList):
-	"""Registers a new set of users as specified in userList. 
+	"""Registers a new set of users as specified in userList.
 
 	Should be called with a large number of users for good security (prefferably all that will ever be in the system.)
 
-	userList -- list of dictionaries each depicting a user with the keys: 
+	userList -- list of dictionaries each depicting a user with the keys:
 		'username', 'department', 'name', 'course'
 
-	returns a list of passwords corresponding to each user"""
+	returns a list of passwords corresponding to each user
+	"""
 
 	noUsers = len(userList)
 	passwords = [cryptography.generatePrintableRandomString() for i in range(noUsers)]
-	
+
 	publicKeys = []
 	for i in range(noUsers):
 		challengeStr = cryptography.generateRandomString(128)
@@ -61,11 +63,12 @@ def makeCandidate(username, details, photo, approved=False):
 def registerVote(plainText, username, password):
 	"""Register plainText as the vote of user with given username and password"""
 	userlist = User.objects.filter(username=username)
-	if len(userlist) == 0:
+	#print len(userlist)
+	if (len(userlist) == 0):
 		return False
 	assert(len(userlist) == 1)
 	decryptedPrivateKey = cryptography.symmetricDecrypt(userlist[0].encryptedPrivateKey,password)
-	
+
 	certificate = cryptography.asymmetricSign(plainText,decryptedPrivateKey)
 	key = RSA.importKey(decryptedPrivateKey)
 	key = key.publickey().exportKey()
@@ -126,12 +129,12 @@ def getCandidateDetail(username):
 
 def setCandidateDetails(username):
 	detail = getCandidateDetail(username);
-	# converting dict to json 
+	# converting dict to json
 	detail = json.dumps(detail)
 	return detail
 #----------------------
 def getElectionState(state):
-	if state ==0:
+	if state == 0:
 		var = 'pre-election'
 	elif state == 1:
 		var = 'during election'
@@ -140,12 +143,12 @@ def getElectionState(state):
 	return var
 #-----------------------------
 def setElectionState(state):
-        if state ==0:
-                var = 'pre-election'
-        elif state == 1:
-                var = 'during election'
-        else:
-                var = 'post-election'
+    if state == 0:
+        var = 'pre-election'
+    elif state == 1:
+        var = 'during election'
+    else:
+        var = 'post-election'
 #-------------------------
 def getCandidatePost(postId):
 	post = {'vp':{'candidate1':'Ayush ', 'Candidate2':'Sudhanshu'}, 'welfare':{'candidate1':'Ayush ', 'Candidate2':'Sudhanshu'}, 'sport':{'candidate1':'Ayush ', 'Candidate2':'Sudhanshu'}}
@@ -156,4 +159,11 @@ def importElectionData(src):
 	stats = {'':''}
 	return stats
 #------------------------
-
+def verifyVote(votes):
+	"""Verifies all votes"""
+	for vote in votes:
+		value = cryptography.asymmetricVerify(vote.plainText, vote.certificate, vote.publicKey.publicKey)
+		if value == False:
+			print error
+			return value
+	return value

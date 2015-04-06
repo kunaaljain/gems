@@ -8,10 +8,11 @@ class User(models.Model):
 	department = models.CharField(max_length=100)
 	name = models.CharField(max_length=50)
 	course = models.CharField(max_length=30)
+	hostel = models.CharField(max_length=30)
 	encryptedPrivateKey = models.CharField(max_length=4096)
 	'''Non empty only when user is logged in'''
 	plaintextPrivatekey = models.CharField(max_length=2048)
-	
+
 	def __unicode__(self):
         	return self.name
 
@@ -37,13 +38,14 @@ class ChallengeStrings(models.Model):
 
 class PublicKeys(models.Model):
 	publicKey = models.CharField(max_length=2048)
+<<<<<<< HEAD
 
 class CandidateForm(ModelForm):
     class Meta:
         model = Candidates
         #fields = ['username', 'details']
 
-class Registration(models.Model):
+class New_Candidate(models.Model):
 	name = models.CharField(max_length=50)
 	post = models.CharField(max_length=4 ,default='')
 	roll = models.IntegerField(max_length=10, default='')
@@ -58,3 +60,5 @@ class Registration(models.Model):
 	agenda = models.CharField(max_length=100000, default='')
 	def __unicode__(self):
         	return self.name
+=======
+>>>>>>> 9fc888010cf8060f608fadcad6eff369c81530d1
