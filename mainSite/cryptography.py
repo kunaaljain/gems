@@ -33,7 +33,7 @@ def symmetricDecrypt(inpString, key):
 	msg = cipher.decrypt(inpString)
 	return msg[16:]
 
-def asymmetricPublicEncrypt(inpString, key):	
+def asymmetricPublicEncrypt(inpString, key):
 	symKey = binascii.b2a_base64(cryptoRNG.read(128))
 	cipher = PKCS1_OAEP.new(RSA.importKey(key))
 	ct = binascii.b2a_base64(cipher.encrypt(symKey)) + symmetricEncrypt(inpString, symKey)
@@ -51,7 +51,7 @@ maxRSACiphertextLength = 345 #Given largest feasible plaintext, this is the leng
 
 def asymmetricSign(message, key):
 	"""Returns a signature of inpString signed with 'key'."""
-	key = RSA.importKey(key)	
+	key = RSA.importKey(key)
 	h = SHA.new()
 	h.update(message)
 	signer = PKCS1_PSS.new(key)

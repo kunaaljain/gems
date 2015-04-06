@@ -1,10 +1,8 @@
 # to run this file from cmmand line you will have to enter the following cammand
 # python manage.py shell < dummydata.py
 
-<<<<<<< HEAD
 from mainSite import databaseManager
 '''addUser('kayush', False, 'cse' , 'Ayush', 'btech','qweqwrqwr');
-=======
 from mainSite.databaseManager import addUser, addCandidate, addVotes, addChallengeStrings, addPublicKeys
 
 addUser('kayush', False, 'cse' , 'Ayush', 'btech','qweqwrqwr');
@@ -24,4 +22,6 @@ userList = [{'username':'kayush', 'department':'cse', 'name':'Ayush', 'course':'
 
 passy = databaseManager.registerUsers(userList)
 print passy
-databaseManager.addVotes("some text pertaining to a vote", "kayush", passy[0])
+databaseManager.registerVote("some text pertaining to a vote", "kayush", passy[0])
+databaseManager.registerVote("some text pertaining to a vote", "kayush", passy[0])
+databaseManager.registerVote("some text pertaining to a vote", "kayush", passy[0])
