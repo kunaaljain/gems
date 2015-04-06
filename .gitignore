@@ -58,3 +58,5 @@ db.sqlite3
 
 # pyc file
 *.pyc
+*.py~
+*.html~
