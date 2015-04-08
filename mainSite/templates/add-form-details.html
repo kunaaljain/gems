@@ -1,0 +1,115 @@
+{% extends "blank-page.html" %}
+{% block content %}
+<head>
+  <script type="text/javascript" language="javascript">
+      var noFields = 2
+ 
+      $(document).ready(function(){
+        {% for course in courseForm %}
+          addField("{{course.description}}", "{{course.type}}");
+        {% endfor %}
+      });
+
+      function addField(description="", type=""){
+        var newDiv = document.createElement("div")
+        newDiv.setAttribute('id', 'formField'+noFields)
+        var radioType = ""
+        radioChecked = textChecked = fileChecked = checkBoxChecked = ""
+	hidden = ""
+        if(type == "radio")radioChecked = "checked"
+        else if(type == "file") fileChecked = "checked"
+	else if(type == "checkbox") checkBoxChecked = "checked"
+        else textChecked = "checked"
+        fieldType = "<div class=\"form-group\"><label>Field Type</label><label class=\"radio-inline\"><input name=\"fieldType"+noFields+"\" value=\"radio\" type=\"radio\" "+radioChecked+"></input>Radio Button</label><label class=\"radio-inline\"><input name=\"fieldType"+noFields+"\" value=\"file\" type=\"radio\" "+fileChecked+" >File Upload</label><label class=\"radio-inline\"><input name=\"fieldType"+noFields+"\" value=\"text\" type=\"radio\" "+textChecked+" >Text Box</label><label class=\"radio-inline\"><input name=\"fieldType"+noFields+"\" value=\"checkbox\" type=\"radio\" "+checkBoxChecked+" >CheckBox</label></div>"
+		
+	radioOptions = "<div class=\"form-group\"><label>Enter Options</label><input class=\"form-control\" placeholder=\"Enter options seperated by ; for radiobutton and checkbox\" name=\"radioOptions"+noFields+"\"></input><br></div>"
+
+	placeholder = "<div class=\"form-group\"><label>Placeholder Value</label><input class=\"form-control\" name=\"placeholder"+noFields+"\"></input><br></div>"
+
+	validation = "<div class=\"form-group\"><label>Validation Value</label><input class=\"form-control\" name=\"validation"+noFields+"\"></input><br></div>"
+	
+        newDiv.innerHTML = "<label>Field Label</label><input class=\"form-control\" name=\"label"+noFields+"\" value=\""+description+"\" required></input><br>"+fieldType+radioOptions+placeholder+validation+"<input type=\"button\" onclick=\"removeField("+noFields+")\" value=\"Remove\"/>"
+        noFields += 1
+        document.getElementById("formFields").appendChild(newDiv)
+      }
+      function removeField(fieldID){
+        document.getElementById("formField"+fieldID).innerHTML = ""
+      }
+      </script>
+
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+      <title>Create Form</title>
+
+      
+        <style>
+        #graph1{
+          border:solid 2px;
+          border-color: black;
+          margin-top: 0 px;
+          width: 450px;
+          float: left;
+
+          margin-left: 0px;
+          display: block;
+          height: 350px;
+        }
+        #maingraph{
+          border:solid 2px;
+          border-color: black;
+          margin-top: 0 px;
+          width: 980px;
+          float: left;
+
+          margin-left: 0px;
+          display: block;
+          height: 350px;
+        }
+        .btn.btn-warning{
+          position: center;
+          margin-left: 440px;
+        }
+        .text.ans{
+          width:1000px;
+        }
+
+        </style>
+
+      </head>
+
+      <body>
+
+        <div id="wrapper">
+          <!-- Page Content -->
+          <div id="page-wrapper">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-lg-12">
+                  <h2 class="page-header">Form Designer{{comments.0.course}}</h2>
+                </div>
+                <!-- /.col-lg-12 -->
+              </div>
+              <!-- /.row -->
+              <!--The list of courses-->
+              <div class="row">
+                <div class="col-lg-12">
+                  <form action="add-fields" method="post">
+                  {%csrf_token%}
+                    <input type="hidden" value="{{course}}" name="course">
+                    <div id="formFields">
+             
+                    </div>
+                    <input type="button" name="btnAddField" onclick="addField()" value="Add new"/>
+                    <p><button type="submit" class="btn btn-primary">Submit</button></p>
+                  </form>
+                </div>
+                </div>
+                <!-- /.container-fluid -->
+              </div>
+              <!-- /#page-wrapper -->
+
+            </div>
+          </body>
+
+          </html>
+{% endblock %}
