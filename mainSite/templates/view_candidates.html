@@ -1,0 +1,6 @@
+{% extends "blank-page.html" %}
+{% block content %}
+{% for candidate in candidate_detail %}
+<h3><a href="/main/view/{{candidate.name}}">{{candidate.name}}</a></h3>
+{% endfor %}
+{% endblock %}
