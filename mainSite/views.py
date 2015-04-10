@@ -45,18 +45,25 @@ def candidateView(request,candidateName):
 	data = {
 		"detail" : b
 	}
+<<<<<<< HEAD
 	#candidateDetails = getCandidateDetail(candidateName)
 	#contextObj = Context({'candidateName':candidateName,'candidateDetails':candidateDetails})
+=======
+>>>>>>> 4399f5b8eb2ff584a27282ac0739f6ed79664116
 	return render_to_response('test.html',data,context_instance=RequestContext(request))
 
 def register(request):
 	return render(request, 'registration_form.html')
 
+<<<<<<< HEAD
 """def add_candidate(request):
 	if request.GET:
 		new_candidate = New_Candidate(name=request.GET['name'],post=request.GET['optionsRadios'],  roll=request.GET['roll'], department=request.GET['dept'], cpi=request.GET['cpi'], sem=request.GET['sem'], backlogs=request.GET['back'], email=request.GET['email'], contact=request.GET['contact'], hostel=request.GET['hostel'], room=request.GET['room'], agenda=request.GET['agenda'])
         	new_candidate.save()
 	return HttpResponseRedirect('/main')"""
+=======
+
+>>>>>>> 4399f5b8eb2ff584a27282ac0739f6ed79664116
 
 def adminHome(request):
 	return render(request, 'adminHome.html')
@@ -97,8 +104,37 @@ def add_fields(request):
 
 def add_post(request):
 	if request.method == "GET":
-		#Posts.objects.filter(postname=request.GET['post_name']).update(info_fields='')
 		new_post = Posts(postname=request.GET['post_name'],info_fields='')
 		new_post.save()
-		#return HttpResponse(request.GET['post_name'])
 	return HttpResponseRedirect('/gems/adminHome/create-form')
+
+def view_candidate_information(request):
+	if not request.method == "GET":
+		raise IOError
+
+	candidate_username = request.GET['user']
+	candidate = Candidates.objects.filter(username=candidate_username)
+	if len(candidate) == 0 or candidate[0].approved == False:
+		return HttpResponse("Sorry, no such candidate exists")
+	assert(len(candidate) == 1)
+	candidate = candidate[0]
+
+	candidate_photo = candidate.photo
+
+	details = candidate.details
+	details = json.loads(details)
+	post = Posts.objects.filter(postname=candidate.postname)
+	assert(len(post) == 1)
+	post = post[0]
+
+	fields = eval(post.info_fields)
+	for x in details:
+		field = None
+		for f in fields:
+			if f['id'] == x['id']:
+				field = f
+				break
+		assert(field != None)
+		x['description'] = field['description']
+
+	return render(request, 'view-candidate-information.html', {'details': details, 'photo': candidate_photo, 'username': candidate_username})

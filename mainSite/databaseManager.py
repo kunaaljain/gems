@@ -51,14 +51,14 @@ def addUser(username, department, name, course, password, voted=False):
 	return key.publickey().exportKey()
 
 #---------------------------------
-def makeCandidate(username, details, photo, approved=False):
+def makeCandidate(username, details, postname, photo, approved=False):
 	if len(Users.objects.filter(username=username)) == 0:
 		 return False
 	else:
 		assert(len(Users.objects.filter(username=username)) == 1)
-		assert(approved == False)
+		#assert(approved == False)
 		assert(len(details) != 0)
-		p1 = Candidates(username=username, details=details, photo=photo, approved=approved)
+		p1 = Candidates(username=username, details=details, postname=postname, photo=photo, approved=approved)
 		p1.save()
 		return True
 

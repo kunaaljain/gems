@@ -15,4 +15,5 @@ urlpatterns = patterns('',
 	url(r'^adminHome/create-form/add-form-details$', views.add_form_details),
 	url(r'^adminHome/create-form/add-fields$', views.add_fields),
 	url(r'^adminHome/create-form/add-post$', views.add_post),
+	url(r'^candidates/view-candidate-information', views.view_candidate_information)
  )
