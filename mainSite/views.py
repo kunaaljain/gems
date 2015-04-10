@@ -8,6 +8,7 @@ from django.core.context_processors import csrf
 from .databaseManager import getCandidateDetail
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+import re
 
 def user_login(request):                      #url for login page is home/login
     if request.method == 'POST':
@@ -45,25 +46,10 @@ def candidateView(request,candidateName):
 	data = {
 		"detail" : b
 	}
-<<<<<<< HEAD
-	#candidateDetails = getCandidateDetail(candidateName)
-	#contextObj = Context({'candidateName':candidateName,'candidateDetails':candidateDetails})
-=======
->>>>>>> 4399f5b8eb2ff584a27282ac0739f6ed79664116
 	return render_to_response('test.html',data,context_instance=RequestContext(request))
 
 def register(request):
 	return render(request, 'registration_form.html')
-
-<<<<<<< HEAD
-"""def add_candidate(request):
-	if request.GET:
-		new_candidate = New_Candidate(name=request.GET['name'],post=request.GET['optionsRadios'],  roll=request.GET['roll'], department=request.GET['dept'], cpi=request.GET['cpi'], sem=request.GET['sem'], backlogs=request.GET['back'], email=request.GET['email'], contact=request.GET['contact'], hostel=request.GET['hostel'], room=request.GET['room'], agenda=request.GET['agenda'])
-        	new_candidate.save()
-	return HttpResponseRedirect('/main')"""
-=======
-
->>>>>>> 4399f5b8eb2ff584a27282ac0739f6ed79664116
 
 def adminHome(request):
 	return render(request, 'adminHome.html')
@@ -82,7 +68,11 @@ def add_form_details(request):
 	post1 = request.GET['optionsRadios']
 	message = ''
 	uid = 0
-	return render(request, 'add-form-details.html')
+	post_i = Posts.objects.get(postname=post1)
+	Post_data = {
+		"Post_list" : eval(post_i.info_fields)
+	}
+	return render_to_response('add-form-details.html', Post_data, context_instance=RequestContext(request))
 
 def add_fields(request):
 	if request.method == "POST":
@@ -95,12 +85,21 @@ def add_fields(request):
 				z = request.POST['placeholder'+str(i)]
 				options = request.POST['radioOptions'+str(i)]
 				validation = request.POST['validation'+str(i)]
+				try:
+					re.compile(validation)
+					is_valid = True
+				except re.error:
+					is_valid = False
+					post_i = Posts.objects.get(postname=post1)
+					Post_data = {
+						"Post_list" : eval(post_i.info_fields),
+						"alert" : "Not a valid regex"
+					}
+					return render(request, 'add-form-details.html', Post_data, context_instance=RequestContext(request))
 				f = {"description": formFields[x], "id": "field"+str(len(res)), "type": y, "placeholder": z, "options": options, "validation": validation}
 				res += [f]
 		Posts.objects.filter(postname=post1).update(info_fields=res)
-		#post_save = Posts(postname=post1,info_fields=res)
-		#post_save.save()
-	return HttpResponseRedirect('/gems/adminHome')
+	return HttpResponseRedirect('/gems/adminHome/create-form')
 
 def add_post(request):
 	if request.method == "GET":

@@ -5,12 +5,10 @@
       var noFields = 2
  
       $(document).ready(function(){
-        {% for course in courseForm %}
-          addField("{{course.description}}", "{{course.type}}");
-        {% endfor %}
+	
       });
 
-      function addField(description="", type=""){
+      function addField(description="", type="", radioOptions="", placeholder="", validation=""){
         var newDiv = document.createElement("div")
         newDiv.setAttribute('id', 'formField'+noFields)
         var radioType = ""
@@ -22,11 +20,11 @@
         else textChecked = "checked"
         fieldType = "<div class=\"form-group\"><label>Field Type</label><label class=\"radio-inline\"><input name=\"fieldType"+noFields+"\" value=\"radio\" type=\"radio\" "+radioChecked+"></input>Radio Button</label><label class=\"radio-inline\"><input name=\"fieldType"+noFields+"\" value=\"file\" type=\"radio\" "+fileChecked+" >File Upload</label><label class=\"radio-inline\"><input name=\"fieldType"+noFields+"\" value=\"text\" type=\"radio\" "+textChecked+" >Text Box</label><label class=\"radio-inline\"><input name=\"fieldType"+noFields+"\" value=\"checkbox\" type=\"radio\" "+checkBoxChecked+" >CheckBox</label></div>"
 		
-	radioOptions = "<div class=\"form-group\"><label>Enter Options</label><input class=\"form-control\" placeholder=\"Enter options seperated by ; for radiobutton and checkbox\" name=\"radioOptions"+noFields+"\"></input><br></div>"
+	radioOptions = "<div class=\"form-group\"><label>Enter Options</label><input class=\"form-control\" placeholder=\"Enter options seperated by ; for radiobutton and checkbox\" name=\"radioOptions"+noFields+"\" value=\""+radioOptions+"\"></input><br></div>"
 
-	placeholder = "<div class=\"form-group\"><label>Placeholder Value</label><input class=\"form-control\" name=\"placeholder"+noFields+"\"></input><br></div>"
+	placeholder = "<div class=\"form-group\"><label>Placeholder Value</label><input class=\"form-control\" name=\"placeholder"+noFields+"\"value=\""+placeholder+"\"></input><br></div>"
 
-	validation = "<div class=\"form-group\"><label>Validation Value</label><input class=\"form-control\" name=\"validation"+noFields+"\"></input><br></div>"
+	validation = "<div class=\"form-group\"><label>Validation Value</label><input class=\"form-control\" name=\"validation"+noFields+"\"value=\""+validation+"\" placeholder=\"Regex input\"></input><br></div>"
 	
         newDiv.innerHTML = "<label>Field Label</label><input class=\"form-control\" name=\"label"+noFields+"\" value=\""+description+"\" required></input><br>"+fieldType+radioOptions+placeholder+validation+"<input type=\"button\" onclick=\"removeField("+noFields+")\" value=\"Remove\"/>"
         noFields += 1
@@ -99,6 +97,14 @@
                     <div id="formFields">
              
                     </div>
+			<script>
+				{% for course in Post_list %}
+				  addField("{{course.description}}", "{{course.type}}", "{{course.options}}", "{{course.placeholder}}", "{{course.validation}}");
+				{% endfor %}
+				{% if alert %}
+					alert("{{alert}}");
+				{% endif %}
+			</script>
                     <input type="button" name="btnAddField" onclick="addField()" value="Add new"/>
                     <p><button type="submit" class="btn btn-primary">Submit</button></p>
                   </form>
