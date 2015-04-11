@@ -2,13 +2,9 @@
 {% block content %}
 <head>
   <script type="text/javascript" language="javascript">
-      var noFields = 2
- 
-      $(document).ready(function(){
-	
-      });
+      var noFields = 2;
 
-      function addField(description="", type="", radioOptions="", placeholder="", validation=""){
+      function addField(description, type, radioOptions, placeholder, validation){
         var newDiv = document.createElement("div")
         newDiv.setAttribute('id', 'formField'+noFields)
         var radioType = ""
@@ -105,7 +101,7 @@
 					alert("{{alert}}");
 				{% endif %}
 			</script>
-                    <input type="button" name="btnAddField" onclick="addField()" value="Add new"/>
+                    <input type="button" name="btnAddField" onclick="addField('','','','','')" value="Add new"/>
                     <p><button type="submit" class="btn btn-primary">Submit</button></p>
                   </form>
                 </div>
