@@ -5,7 +5,6 @@ import os
 from mainSite import databaseManager
 from django.core.management import call_command
 
-os.remove('db.sqlite3')
 call_command('makemigrations', interactive = False)
 call_command('migrate', interactive = False)
 
