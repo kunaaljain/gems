@@ -1,0 +1,4 @@
+{% extends "blank-page.html" %}
+{% block content %}
+
+{% endblock %}

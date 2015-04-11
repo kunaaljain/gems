@@ -21,7 +21,10 @@ class Users(models.Model):
 class Candidates(models.Model):
 	username = models.CharField(max_length=50)
 	details = models.CharField(max_length=10000)
+<<<<<<< HEAD
+=======
 	postname = models.CharField(max_length=50)
+>>>>>>> 4399f5b8eb2ff584a27282ac0739f6ed79664116
 	photo = models.CharField(max_length=100)
 	approved = models.BooleanField()
 	def __unicode__(self):
