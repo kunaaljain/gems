@@ -6,7 +6,10 @@ from mainSite import databaseManager
 from django.core.management import call_command
 
 os.remove('db.sqlite3')
-call_command('syncdb', interactive = False)
+call_command('makemigrations', interactive = False)
+call_command('migrate', interactive = False)
+
+# call_command('syncdb', interactive = False)
 
 userList = [{'username':'kayush', 'department':'cse', 'name':'Ayush', 'course':'btech', 'hostel' : 'Siang'},
 		 {'username':'adgfd', 'department':'cse', 'name':'sdg', 'course':'btech', 'hostel' : 'Kameng'},

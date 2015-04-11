@@ -103,7 +103,7 @@ def add_fields(request):
 
 def add_post(request):
 	if request.method == "GET":
-		new_post = Posts(postname=request.GET['post_name'],info_fields='')
+		new_post = Posts(postname=request.GET['post_name'],info_fields='[]')
 		new_post.save()
 	return HttpResponseRedirect('/gems/adminHome/create-form')
 
