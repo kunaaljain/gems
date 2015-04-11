@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response, render
 from mainSite.models import *
-import json
+import json, copy
 from django.http import HttpResponse
 from django.template import RequestContext, loader, Context
 from django.http import HttpResponseRedirect
@@ -49,7 +49,30 @@ def candidateView(request,candidateName):
 	return render_to_response('test.html',data,context_instance=RequestContext(request))
 
 def register(request):
-	return render(request, 'registration_form.html')
+	if request.method == "GET":
+		post_i = Posts.objects.all()
+		post_data = {
+			"post_detail" : post_i
+		}
+		return render_to_response('registration_form.html', post_data, context_instance=RequestContext(request))
+	elif request.method == "POST":
+		postname=request.POST['optionsRadios']
+		return HttpResponseRedirect('/gems/register/form?postname='+postname)
+
+def registrationform(request):
+	if(request.method=='GET') :
+		postname = request.GET.get('postname')
+		x=Posts.objects.get(postname=postname).info_fields
+		formFormat = eval(x)
+		return render(request, 'form.html', {"formFormat": formFormat ,  "postname":postname })
+	
+	elif(request.method=='POST') :
+		postName = request.POST.dict()["postname"]
+		record = copy.deepcopy(request.POST.dict())
+		record.pop('csrfmiddlewaretoken')
+		reg_cand = Candidates(username='b',details=json.dumps(record),postname=postName,photo='',approved=False)
+		reg_cand.save()
+		return HttpResponseRedirect('/gems/voterHome')
 
 def adminHome(request):
 	return render(request, 'adminHome.html')

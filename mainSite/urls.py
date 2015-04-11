@@ -4,7 +4,8 @@ from mainSite.models import Candidates
 from mainSite import views
 
 urlpatterns = patterns('',
-	url(r'^register', views.register),
+	url(r'^register/$', views.register),
+	url(r'^register/form/', views.registrationform),
 	url(r'^view$', views.view_candidate),
 	url(r'^voterHome$', views.voterHome),
 	url(r'^view/(?P<candidateName>[-\w]+)/$',views.candidateView , name = 'candidatePage'),
