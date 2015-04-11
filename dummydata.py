@@ -1,6 +1,3 @@
-# to run this file from cmmand line you will have to enter the following cammand
-# python manage.py shell < dummydata.py
-
 import os
 from mainSite import databaseManager
 from django.core.management import call_command

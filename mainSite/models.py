@@ -54,3 +54,17 @@ class New_Candidate(models.Model):
 	agenda = models.CharField(max_length=100000, default='')
 	def __unicode__(self):
         	return self.name
+
+class Comments(models.Model):
+	author = models.ForeignKey(Users,null=True)
+	content = models.CharField(max_length=80000)
+	likes = models.BigIntegerField()
+
+class Agenda(models.Model):
+	candidate = models.ForeignKey(Users)
+	content = models.CharField(max_length=80000)
+	comments = models.ManyToManyField("Comments",blank=True)
+
+class CommentLikes(models.Model):
+	user = models.ForeignKey(Users)
+	comment = models.ForeignKey(Comments)
