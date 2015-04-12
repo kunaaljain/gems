@@ -59,18 +59,45 @@ def register(request):
 		postname=request.POST['optionsRadios']
 		return HttpResponseRedirect('/gems/register/form?postname='+postname)
 
+@login_required
 def registrationform(request):
 	if(request.method=='GET') :
+		if len(Users.objects.filter(username=request.user.username)) == 0:
+			return HttpResponse("Only people who can vote are eligible for candidature.")
 		postname = request.GET.get('postname')
 		x=Posts.objects.get(postname=postname).info_fields
 		formFormat = eval(x)
+		#FEATURE REQUIREMENT - data is not persistent - venkat
 		return render(request, 'form.html', {"formFormat": formFormat ,  "postname":postname })
 	
 	elif(request.method=='POST') :
-		postName = request.POST.dict()["postname"]
+		postname = request.POST.dict()["postname"]
 		record = copy.deepcopy(request.POST.dict())
 		record.pop('csrfmiddlewaretoken')
-		reg_cand = Candidates(username='b',details=json.dumps(record),postname=postName,photo='',approved=False)
+
+		files = request.FILES.dict()
+		assert(len(Posts.objects.filter(postname=postname)) == 1)
+		post = eval(Posts.objects.filter(postname=postname)[0].info_fields)
+		for doc in files:
+			field = None
+			for candidate_field in post:
+				if candidate_field['id'] == doc:
+					field = candidate_field
+					break
+			assert(field != None)
+			reMatch = re.compile(field['validation']+'$')
+			if not reMatch.match(files[doc]._name):
+				postname = request.GET.get('postname')
+				x=Posts.objects.filter(postname=postname)[0].info_fields
+				formFormat = eval(x)
+				#FEATURE REQUIREMENT - data is not persistent - venkat
+				return render(request, 'form.html', {"formFormat": formFormat ,  "postname":postname, "alert": "Please give the correct file format"}, context_instance=RequestContext(request))
+
+			newDoc = UploadedDocuments(document=files[doc])
+			newDoc.save()
+			record[doc] = str(newDoc.id)
+			
+		reg_cand = Candidates(username=request.user.username,details=json.dumps(record),postname=postname,photo='',approved=False)
 		reg_cand.save()
 		return HttpResponseRedirect('/gems/voterHome')
 
@@ -136,7 +163,7 @@ def view_candidate_information(request):
 
 	candidate_username = request.GET['user']
 	candidate = Candidates.objects.filter(username=candidate_username)
-	if len(candidate) == 0 or candidate[0].approved == False:
+	if len(candidate) == 0:# or candidate[0].approved == False:
 		return HttpResponse("Sorry, no such candidate exists")
 	assert(len(candidate) == 1)
 	candidate = candidate[0]
@@ -150,13 +177,26 @@ def view_candidate_information(request):
 	post = post[0]
 
 	fields = eval(post.info_fields)
+	detailsList = []
 	for x in details:
+		if x == 'postname' or x == 'agree':
+			continue
 		field = None
 		for f in fields:
-			if f['id'] == x['id']:
+			#print details[x]
+			if f['id'] == x:
 				field = f
 				break
 		assert(field != None)
-		x['description'] = field['description']
+		if field['type'] == 'file':
+			value = "/media/" + UploadedDocuments.objects.filter(id=details[x])[0].document.name
+		else:
+			value = details[x]
+		detailsList += [{'description': field['description'], 'value': value, 'type': field['type']}]
 
-	return render(request, 'view-candidate-information.html', {'details': details, 'photo': candidate_photo, 'username': candidate_username})
+	#reverse the list
+	detailsList1 = []
+	for x in range(len(detailsList)-1, -1, -1):
+		detailsList1 += [detailsList[x]]
+
+	return render(request, 'view-candidate-information.html', {'details': detailsList1, 'photo': candidate_photo, 'username': candidate_username})

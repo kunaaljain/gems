@@ -1,7 +1,13 @@
 {% extends "blank-page.html" %}
 {% block content %}
 
-<form action="" method="post" enctype="multipart/form-data">
+<script>
+    {% if alert %}
+        alert("{{alert}}");
+    {% endif %}
+</script>
+
+<form action="" method="post" enctype="multipart/form-data" >
                     {%csrf_token%}
                     <input type="hidden" name="postname" value="{{postname}}" />
                     <div><div><div><div><table><tbody><!--So that it can be terminated at each section-->
@@ -18,12 +24,12 @@
 	                                        <div class="panel-body">
 	                                            <table class="table table-bordered table-striped">
 	                                            <div class="form-group">
-							{% if x.validation != '' %}
-	                                                	<input placeholder="{{x.placeholder}}" class="form-control" rows="1" name="{{x.id}}" pattern="{{x.validation}}" required>{{x.prevValue}}</input>
-							{% endif %}
-							{% if x.validation == '' %}
-								<input placeholder="{{x.placeholder}}" class="form-control" rows="1" name="{{x.id}}" required>{{x.prevValue}}</input>
-							{% endif %}
+                        							{% if x.validation != '' %}
+                        	                                                	<input placeholder="{{x.placeholder}}" class="form-control" rows="1" name="{{x.id}}" pattern="{{x.validation}}" required>{{x.prevValue}}</input>
+                        							{% endif %}
+                        							{% if x.validation == '' %}
+                        								<input placeholder="{{x.placeholder}}" class="form-control" rows="1" name="{{x.id}}" required>{{x.prevValue}}</input>
+                        							{% endif %}
 	                                            </div>
 	                                        </div>
 	                                    </div>
