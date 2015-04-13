@@ -1,4 +1,0 @@
-{% extends "blank-page.html" %}
-{% block content %}
-<p><a href="adminHome/create-form/">Create Forms</a></p>
-{% endblock %}
