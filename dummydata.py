@@ -28,3 +28,6 @@ print passy
 databaseManager.registerVote("some text pertaining to a vote", "kayush", passy[0])
 databaseManager.registerVote("some text pertaining to a vote", "kayush", passy[0])
 databaseManager.registerVote("some text pertaining to a vote", "kayush", passy[0])
+
+#sampe post info_fields
+#[{'description': u'Name', 'type': u'text', 'id': 'field0', 'validation': u'', 'placeholder': u'Your Name', 'options': u''}, {'description': u'Date of Birth', 'type': u'text', 'id': 'field1', 'validation': u'[0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9]', 'placeholder': u'DOB - dd-mm-yyyy', 'options': u''}, {'description': u'Agenda', 'type': u'file', 'id': 'field2', 'validation': u'.*.pdf', 'placeholder': u'', 'options': u''}]

@@ -34,20 +34,6 @@ def user_login(request):                      #url for login page is home/login
 def voterHome(request):
 	return render(request, 'main_page.html')
 
-def view_candidate(request):
-    	candidate_i = New_Candidate.objects.all()
-	candidate_data = {
-		"candidate_detail" : candidate_i
-	}
-	return render_to_response('view_candidates.html', candidate_data, context_instance=RequestContext(request))
-
-def candidateView(request,candidateName):
-	b = New_Candidate.objects.get(name=candidateName)
-	data = {
-		"detail" : b
-	}
-	return render_to_response('test.html',data,context_instance=RequestContext(request))
-
 def register(request):
 	if request.method == "GET":
 		post_i = Posts.objects.all()
@@ -59,14 +45,19 @@ def register(request):
 		postname=request.POST['optionsRadios']
 		return HttpResponseRedirect('/gems/register/form?postname='+postname)
 
+@login_required
 def registrationform(request):
 	if(request.method=='GET') :
+		if len(Users.objects.filter(username=request.user.username)) == 0:
+			return HttpResponse("Only people who can vote are eligible for candidature.")
 		postname = request.GET.get('postname')
 		x=Posts.objects.get(postname=postname).info_fields
 		formFormat = eval(x)
+		#FEATURE REQUIREMENT - data is not persistent - venkat
 		return render(request, 'form.html', {"formFormat": formFormat ,  "postname":postname })
 	
 	elif(request.method=='POST') :
+<<<<<<< HEAD
 		postName = request.POST.dict()["postname"]
 		post = Posts.objects.filter(postname = postName).info_fields
 		record = copy.deepcopy(request.POST.dict())
@@ -76,6 +67,49 @@ def registrationform(request):
 		for Id in record:
 			res += [{'id': Id, 'value': record[Id], 'type': 'text'}]
 		reg_cand = Candidates(username='b',details=json.dumps(record),postname=postName,photo='',approved=False)
+=======
+		#BUG REPORT - If a candidate submits a form twice, two separate entries are created
+		postname = request.POST.dict()["postname"]
+		record = copy.deepcopy(request.POST.dict())
+		record.pop('csrfmiddlewaretoken')
+
+		files = request.FILES.dict()
+		assert(len(Posts.objects.filter(postname=postname)) == 1)
+		post = eval(Posts.objects.filter(postname=postname)[0].info_fields)
+		photo = None
+		for doc in files:
+			if doc == 'photo':
+				photo = files[doc]
+				continue
+			field = None
+			for candidate_field in post:
+				if candidate_field['id'] == doc:
+					field = candidate_field
+					break
+			assert(field != None)
+			reMatch = re.compile(field['validation']+'$')
+			if not reMatch.match(files[doc]._name):
+				postname = request.GET.get('postname')
+				x=Posts.objects.filter(postname=postname)[0].info_fields
+				formFormat = eval(x)
+				#FEATURE REQUIREMENT - data is not persistent. This can be solved using the back button - venkat
+				return render(request, 'form.html', {"formFormat": formFormat ,  "postname":postname, "alert": "Please give the correct file format"}, context_instance=RequestContext(request))
+
+			newDoc = UploadedDocuments(document=files[doc])
+			newDoc.save()
+			record[doc] = str(newDoc.id)
+
+		assert(photo != None)
+		photo_name = files['photo']._name
+		if len(photo_name.split('.')) == 0 or photo_name.split('.')[-1] not in ['jpg', 'jpeg', 'png', 'bmp']:
+			postname = request.GET.get('postname')
+			x=Posts.objects.filter(postname=postname)[0].info_fields
+			formFormat = eval(x)
+			#FEATURE REQUIREMENT - data is not persistent - venkat
+			return render(request, 'form.html', {"formFormat": formFormat ,  "postname":postname, "alert": "Please give the photo in a proper format (jpg, jpeg, png or bmp)"}, context_instance=RequestContext(request))
+
+		reg_cand = Candidates(username=request.user.username,details=json.dumps(record),postname=postname,photo=photo,approved=False)
+>>>>>>> a73e8dbb5ff7b75404bff6d33c19a78def037590
 		reg_cand.save()
 		return HttpResponseRedirect('/gems/voterHome')
 
@@ -142,12 +176,12 @@ def view_candidate_information(request):
 		return HttpResponse("You must have come here by mistake. Please mention the candidate.")
 	candidate_username = request.GET['user']
 	candidate = Candidates.objects.filter(username=candidate_username)
-	if len(candidate) == 0 or candidate[0].approved == False:
+	if len(candidate) == 0:# or candidate[0].approved == False:
 		return HttpResponse("Sorry, no such candidate exists")
 	assert(len(candidate) == 1)
 	candidate = candidate[0]
 
-	candidate_photo = candidate.photo
+	candidate_photo = "/media/" + candidate.photo.name
 
 	details = candidate.details
 	details = json.loads(details)
@@ -156,16 +190,44 @@ def view_candidate_information(request):
 	post = post[0]
 
 	fields = eval(post.info_fields)
+	detailsList = []
 	for x in details:
+		if x == 'postname' or x == 'agree':
+			continue
 		field = None
 		for f in fields:
-			if f['id'] == x['id']:
+			#print details[x]
+			if f['id'] == x:
 				field = f
 				break
-		#assert(field != None)
-		if field == None:
-			print "Warning: field not found :- ", x['id']
-			continue
-		x['description'] = field['description']
 
-	return render(request, 'view-candidate-information.html', {'details': details, 'photo': candidate_photo, 'username': candidate_username})
+		assert(field != None)
+		if field['type'] == 'file':
+			value = "/media/" + UploadedDocuments.objects.filter(id=details[x])[0].document.name
+		else:
+			value = details[x]
+		detailsList += [{'description': field['description'], 'value': value, 'type': field['type']}]
+
+	#reverse the list
+	detailsList1 = []
+	for x in range(len(detailsList)-1, -1, -1):
+		detailsList1 += [detailsList[x]]
+
+	return render(request, 'view-candidate-information.html', {'details': detailsList1, 'photo': candidate_photo, 'username': candidate_username})
+
+def view_candidate_list(request):
+	if not request.method == "GET":
+		raise IOError
+	candidates = Candidates.objects.all()
+	res = {}
+	for candidate in candidates:
+		try:
+			name = Users.objects.filter(username=candidate.username)[0].name
+		except IndexError:
+			continue #For debugging purposes only
+			assert(False)
+		if not candidate.postname in res:
+			res[candidate.postname] = []
+		res[candidate.postname] += [{'username': candidate.username, 'name': name}]
+
+	return render(request, 'view-candidate-list.html', {'posts': res})
