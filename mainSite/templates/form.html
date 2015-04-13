@@ -1,0 +1,154 @@
+{% extends "blank-page.html" %}
+{% block content %}
+
+<script>
+    {% if alert %}
+        alert("{{alert}}");
+    {% endif %}
+</script>
+
+<form action="" method="post" enctype="multipart/form-data" >
+                    {%csrf_token%}
+                    <input type="hidden" name="postname" value="{{postname}}" />
+                    <div><div><div><div><table><tbody><!--So that it can be terminated at each section-->
+                    
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Upload Your Photo
+                            </div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <input type="file" name="photo">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% for x in formFormat %}
+                        
+	                    {% if x.type == "text" %}
+	                    </tbody></table></div></div></div></div>
+	                        <div class="row">
+	                            <div class="col-lg-12">
+	                                    <div class="panel panel-default">
+	                                        <div class="panel-heading">
+	                                            {{ x.description }}
+	                                        </div>   
+	                                        <div class="panel-body">
+	                                            <table class="table table-bordered table-striped">
+	                                            <div class="form-group">
+                        							{% if x.validation != '' %}
+                        	                                                	<input placeholder="{{x.placeholder}}" class="form-control" rows="1" name="{{x.id}}" pattern="{{x.validation}}" required>{{x.prevValue}}</input>
+                        							{% endif %}
+                        							{% if x.validation == '' %}
+                        								<input placeholder="{{x.placeholder}}" class="form-control" rows="1" name="{{x.id}}" required>{{x.prevValue}}</input>
+                        							{% endif %}
+	                                            </div>
+	                                        </div>
+	                                    </div>
+	                          	</div>
+	                        </div>
+						<tbody>
+
+						{% elif x.type == "file" %}
+						</tbody></table></div></div>
+						<div class="row">
+                                <div class="col-lg-12">
+                                    <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        {{x.description}}
+                                    </div>
+						 <div class="panel-body">
+                                        <table class="table table-bordered table-striped">
+                                        <div class="form-group">
+                                		<input type="file"  pattern = "{{x.validation}}" name="{{x.id}}">
+                            			</div>
+                                                <tbody>
+						{% elif x.type == "radio" %}
+                        <!-- *****************HTML START******************* -->
+                            </tbody></table></div></div></div></div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        {{x.description}}
+                                    </div>
+                                <div class="panel-body">
+                                   <table class="table table-bordered table-striped">
+                                   <div class="form-group">
+                                   
+                                   <p id="demo1"></p>
+									<script type="text/javascript">
+   										var str = "{{x.options}}";
+   										var res = str.split(";");
+    									var n = res.length;
+                                        var radios = "";
+    								    for (i = 0; i < n; i++) {
+    										
+     
+                                			radios = '<div class="radio">\
+                                   			          <label>\
+                                        		      <input type="radio" name="{{x.id}}" id="optionsRadios1" value="'+res[i]+'" checked>'+res[i]+'\
+                                    			      </label>\
+                                				      </div>' 
+                                            var newDiv = document.createElement("div") 
+                                            newDiv.setAttribute('id', 'formField') 
+                                            newDiv.innerHTML = radios 
+                                            document.getElementById("demo1").appendChild(newDiv) 
+                                		  //alert(i);
+										}
+                                    </script>
+                                    </div>
+                                    </div>
+                                    	<tbody>
+                        {% elif x.type == "checkbox" %}
+                        <!-- *****************HTML START******************* -->
+                                </tbody></table></div></div></div></div>
+                                <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        {{x.description}}
+                                    </div>
+                                    <div class="panel-body">
+                                    <table class="table table-bordered table-striped">
+                                    <div class="form-group">
+                                   
+                                    <p id="demo2"></p>
+                                    <script type="text/javascript">
+                                        var str = "{{x.options}}";
+                                        var res = str.split(";");
+                                        var n = res.length;
+                                        var checks = "";
+                                        for (i = 0; i < n; i++) {     
+                                            checks = '<div class="checkbox">\
+                                                     <label>\
+                                                     <input type="checkbox" name="{{x.id}}" value="">'+res[i]+'\
+                                                     </label>\
+                                                     </div>' 
+                                            var newDiv = document.createElement("div") 
+                                            newDiv.setAttribute('id', 'formField') 
+                                            newDiv.innerHTML = radios 
+                                            document.getElementById("demo2").appendChild(newDiv) 
+                                          //alert(i);
+                                        }
+                                    </script>
+                                    </div>
+                                    </div>      
+                            <tbody>
+                        {% endif %}
+                    {% endfor %}
+        </tbody></table></div></div></div></div>
+	<h4>Declaration by the candidate:</h4>
+	<p>I hereby declare that the above information is to the best of my knowledge. I do not have any disciplinary probation by the institute. I know that any false information in this nomination form will lead to cancellation of my nomination and disciplinary action.</p>
+	<div class="checkbox">
+            <label>
+                <input type="checkbox" name="agree" value="agree" required>I agree
+            </label>
+        </div>
+	<button type="submit" class="btn btn-default">Submit Button</button>
+        <button type="reset" class="btn btn-default">Reset Button</button>
+                    
+            </form>
+
+{% endblock %}
