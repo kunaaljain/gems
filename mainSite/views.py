@@ -57,17 +57,6 @@ def registrationform(request):
 		return render(request, 'form.html', {"formFormat": formFormat ,  "postname":postname })
 	
 	elif(request.method=='POST') :
-<<<<<<< HEAD
-		postName = request.POST.dict()["postname"]
-		post = Posts.objects.filter(postname = postName).info_fields
-		record = copy.deepcopy(request.POST.dict())
-		record.pop('csrfmiddlewaretoken')
-		record.pop('agree')
-		res = []
-		for Id in record:
-			res += [{'id': Id, 'value': record[Id], 'type': 'text'}]
-		reg_cand = Candidates(username='b',details=json.dumps(record),postname=postName,photo='',approved=False)
-=======
 		#BUG REPORT - If a candidate submits a form twice, two separate entries are created
 		postname = request.POST.dict()["postname"]
 		record = copy.deepcopy(request.POST.dict())
@@ -109,7 +98,6 @@ def registrationform(request):
 			return render(request, 'form.html', {"formFormat": formFormat ,  "postname":postname, "alert": "Please give the photo in a proper format (jpg, jpeg, png or bmp)"}, context_instance=RequestContext(request))
 
 		reg_cand = Candidates(username=request.user.username,details=json.dumps(record),postname=postname,photo=photo,approved=False)
->>>>>>> a73e8dbb5ff7b75404bff6d33c19a78def037590
 		reg_cand.save()
 		return HttpResponseRedirect('/gems/voterHome')
 
@@ -137,6 +125,7 @@ def add_form_details(request):
 	return render_to_response('add-form-details.html', Post_data, context_instance=RequestContext(request))
 
 def add_fields(request):
+	flag = 0
 	if request.method == "POST":
 		formFields = request.POST.dict()
 		res = []
@@ -150,18 +139,23 @@ def add_fields(request):
 				try:
 					re.compile(validation)
 					is_valid = True
+					f = {"description": formFields[x], "id": "field"+str(len(res)), "type": y, "placeholder": z, "options": options, "validation": validation}
 				except re.error:
 					is_valid = False
-					post_i = Posts.objects.get(postname=post1)
-					Post_data = {
-						"Post_list" : eval(post_i.info_fields),
-						"alert" : "Not a valid regex"
-					}
-					return render(request, 'add-form-details.html', Post_data, context_instance=RequestContext(request))
-				f = {"description": formFields[x], "id": "field"+str(len(res)), "type": y, "placeholder": z, "options": options, "validation": validation}
+					flag = 1
+					field = "field"+str(len(res))
+					f = {"description": formFields[x], "id": "field"+str(len(res)), "type": y, "placeholder": z, "options": options, "validation": ''}
 				res += [f]
 		Posts.objects.filter(postname=post1).update(info_fields=res)
-	return HttpResponseRedirect('/gems/adminHome/create-form')
+	if flag==0:
+		return HttpResponseRedirect('/gems/adminHome/create-form/')
+	else:
+		post_i = Posts.objects.get(postname=post1)
+		Post_data = {
+			"Post_list" : eval(post_i.info_fields),
+			"alert" : "Not a valid regex in " + field
+		}
+		return render(request, 'add-form-details.html', Post_data, context_instance=RequestContext(request))
 
 def add_post(request):
 	if request.method == "GET":
