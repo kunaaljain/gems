@@ -68,11 +68,16 @@ def registrationform(request):
 	
 	elif(request.method=='POST') :
 		postName = request.POST.dict()["postname"]
+		post = Posts.objects.filter(postname = postName).info_fields
 		record = copy.deepcopy(request.POST.dict())
 		record.pop('csrfmiddlewaretoken')
+		record.pop('agree')
+		res = []
+		for Id in record:
+			res += [{'id': Id, 'value': record[Id], 'type': 'text'}]
 		reg_cand = Candidates(username='b',details=json.dumps(record),postname=postName,photo='',approved=False)
 		reg_cand.save()
-		return HttpRedirect('/gems/voterHome')
+		return HttpResponseRedirect('/gems/voterHome')
 
 def adminHome(request):
 	return render(request, 'adminHome.html')
@@ -133,7 +138,8 @@ def add_post(request):
 def view_candidate_information(request):
 	if not request.method == "GET":
 		raise IOError
-
+	if not 'user' in request.GET:
+		return HttpResponse("You must have come here by mistake. Please mention the candidate.")
 	candidate_username = request.GET['user']
 	candidate = Candidates.objects.filter(username=candidate_username)
 	if len(candidate) == 0 or candidate[0].approved == False:
