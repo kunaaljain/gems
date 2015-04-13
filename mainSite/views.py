@@ -14,9 +14,13 @@ from django.contrib.auth import get_user
 
 from mainSite.models import Agenda,Comments,CommentLikes
 from mainSite.forms import CommentForm
+import logging
+
+logger = logging.getLogger(__name__)
 
 def user_login(request):                      #url for login page is home/login
     if request.method == 'POST':
+    	logger.debug('New login request')
     	username= request.POST.get('username')
     	password = request.POST.get('password')
     	user = authenticate(username=username,password=password)
@@ -37,6 +41,7 @@ def user_login(request):                      #url for login page is home/login
 
 @login_required
 def voterHome(request):
+	logger.info('voter home page requested')
 	return render(request, 'main_page.html')
 
 def register(request):
@@ -158,8 +163,11 @@ def add_fields(request):
 
 def add_post(request):
 	if request.method == "GET":
-		new_post = Posts(postname=request.GET['post_name'],info_fields='[]')
-		new_post.save()
+		if len(Posts.objects.filter(postname=request.GET['post_name'])) == 0:
+			new_post = Posts(postname=request.GET['post_name'],info_fields='[]')
+			new_post.save()
+		else:
+			logging.error('Duplicate Post')
 	return HttpResponseRedirect('/gems/adminHome/create-form')
 
 def view_candidate_information(request):

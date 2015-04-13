@@ -1,11 +1,14 @@
 import os
 import sys
 import json
+import logging
 from Crypto.PublicKey import RSA
 from django.contrib.auth.models import User
 
 from models import Users, Candidates,Votes, PublicKeys, ChallengeStrings
 import cryptography
+
+logger = logging.getLogger(__name__)
 
 def registerUsers(userList):
 	"""Registers a new set of users as specified in userList.
@@ -32,6 +35,7 @@ def registerUsers(userList):
 		publicKeys += [newPublicKey]
 		user = User.objects.create_user(username = userList[i]['username'], password = passwords[i])
 		user.save()
+		logger.info('New user added')
 
 	cryptography.permuteList(publicKeys)
 	for i in range(len(publicKeys)):
