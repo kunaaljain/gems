@@ -48,3 +48,17 @@ class Posts(models.Model):
 
 class UploadedDocuments(models.Model):
 	document = models.FileField(upload_to='documents/other_uploads/%Y/%m/%d')
+
+class Comments(models.Model):
+	author = models.ForeignKey(Users,null=True)
+	content = models.CharField(max_length=80000)
+	likes = models.BigIntegerField()
+
+class Agenda(models.Model):
+	candidate = models.ForeignKey(Users)
+	content = models.CharField(max_length=80000)
+	comments = models.ManyToManyField("Comments",blank=True)
+
+class CommentLikes(models.Model):
+	user = models.ForeignKey(Users)
+	comment = models.ForeignKey(Comments)
