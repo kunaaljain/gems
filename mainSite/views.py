@@ -68,8 +68,13 @@ def registrationform(request):
 	
 	elif(request.method=='POST') :
 		postName = request.POST.dict()["postname"]
+		post = Posts.objects.filter(postname = postName).info_fields
 		record = copy.deepcopy(request.POST.dict())
 		record.pop('csrfmiddlewaretoken')
+		record.pop('agree')
+		res = []
+		for Id in record:
+			res += [{'id': Id, 'value': record[Id], 'type': 'text'}]
 		reg_cand = Candidates(username='b',details=json.dumps(record),postname=postName,photo='',approved=False)
 		reg_cand.save()
 		return HttpResponseRedirect('/gems/voterHome')
@@ -133,7 +138,8 @@ def add_post(request):
 def view_candidate_information(request):
 	if not request.method == "GET":
 		raise IOError
-
+	if not 'user' in request.GET:
+		return HttpResponse("You must have come here by mistake. Please mention the candidate.")
 	candidate_username = request.GET['user']
 	candidate = Candidates.objects.filter(username=candidate_username)
 	if len(candidate) == 0 or candidate[0].approved == False:
@@ -156,7 +162,10 @@ def view_candidate_information(request):
 			if f['id'] == x['id']:
 				field = f
 				break
-		assert(field != None)
+		#assert(field != None)
+		if field == None:
+			print "Warning: field not found :- ", x['id']
+			continue
 		x['description'] = field['description']
 
 	return render(request, 'view-candidate-information.html', {'details': details, 'photo': candidate_photo, 'username': candidate_username})
