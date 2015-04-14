@@ -3,7 +3,7 @@ from django.forms import ModelForm
 
 # Create your models here.
 class Users(models.Model):
-	username = models.CharField(max_length=50, unique=True)
+	username = models.CharField(max_length=50)
 	voted = models.BooleanField()
 	department = models.CharField(max_length=100)
 	name = models.CharField(max_length=50)
@@ -21,8 +21,7 @@ class Users(models.Model):
 class Candidates(models.Model):
 	username = models.CharField(max_length=50)
 	details = models.CharField(max_length=10000)
-	postname = models.CharField(max_length=50)
-	photo = models.FileField(upload_to='documents/candidate_photos/%Y/%m/%d')
+	photo = models.CharField(max_length=100)
 	approved = models.BooleanField()
 	def __unicode__(self):
         	return self.username
@@ -40,25 +39,18 @@ class ChallengeStrings(models.Model):
 class PublicKeys(models.Model):
 	publicKey = models.CharField(max_length=2048)
 
-class Posts(models.Model):
-	postname = models.CharField(max_length=50)
-	info_fields = models.CharField(max_length=10000)
+class New_Candidate(models.Model):
+	name = models.CharField(max_length=50)
+	post = models.CharField(max_length=4 ,default='')
+	roll = models.IntegerField(max_length=10, default='')
+	department = models.CharField(max_length=100, default='')
+	cpi = models.FloatField(max_length=4, default='')
+	sem = models.IntegerField(max_length=1, default='')
+	backlogs = models.CharField(max_length=50, default='')
+	email = models.CharField(max_length=50, default='')
+	contact = models.IntegerField(max_length=10, default='')
+	hostel = models.CharField(max_length=10,default='')
+	room = models.CharField(max_length=10, default='')
+	agenda = models.CharField(max_length=100000, default='')
 	def __unicode__(self):
-		return self.postname
-
-class UploadedDocuments(models.Model):
-	document = models.FileField(upload_to='documents/other_uploads/%Y/%m/%d')
-
-class Comments(models.Model):
-	author = models.ForeignKey(Users,null=True)
-	content = models.CharField(max_length=80000)
-	likes = models.BigIntegerField()
-
-class Agenda(models.Model):
-	candidate = models.ForeignKey(Users)
-	content = models.CharField(max_length=80000)
-	comments = models.ManyToManyField("Comments",blank=True)
-
-class CommentLikes(models.Model):
-	user = models.ForeignKey(Users)
-	comment = models.ForeignKey(Comments)
+        	return self.name
