@@ -6,7 +6,7 @@ from django.core.management import call_command
 # call_command('migrate', interactive = False)
 
  call_command('syncdb', interactive = True)
-
+ 
  #This part is essential to the functioning of the system:
 GlobalVariables(varname='electionState', value='pre-election')
 

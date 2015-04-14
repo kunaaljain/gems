@@ -22,6 +22,9 @@ from django.contrib import messages
 from mainSite.forms import CommentForm
 from .databaseManager import registerUsers
 from gems.settings import BASE_DIR
+import logging
+
+logger = logging.getLogger(__name__)
 
 @login_required
 def user_logout(request):
@@ -29,29 +32,32 @@ def user_logout(request):
 	return HttpResponseRedirect('/gems')
 
 def user_login(request):                      #url for login page is home/login
-	if request.method == 'POST':
-		username= request.POST.get('username')
-		password = request.POST.get('password')
-		user = authenticate(username=username,password=password)
-		if user:
-			if (user.is_active and user.is_staff):
-				login(request, user)
-				if len(Users.objects.filter(username=username)) == 0:
-					return HttpResponseRedirect('/gems/adminHome')
-				else:
-					return HttpResponseRedirect('/gems/voterHome')
-			else:
-				login(request, user)
-				return HttpResponseRedirect('/gems/voterHome')
-		else:
-			return HttpResponse("your account is diabled")		
-	else:
-		# No context variables to pass to the template system, hence the
-		# blank dictionary object...
-		return render(request, 'login.html', {})
+
+    if request.method == 'POST':
+    	logger.debug('New login request')
+    	username= request.POST.get('username')
+    	password = request.POST.get('password')
+    	user = authenticate(username=username,password=password)
+    	if user:
+    	    if (user.is_active and user.is_staff):
+    	        login(request, user)
+    	        if len(Users.objects.filter(username=username)) == 0:
+    	        	return HttpResponseRedirect('/gems/adminHome')
+    	        else:
+    	        	return HttpResponseRedirect('/gems/voterHome')
+    	    else:
+                login(request, user)
+                return HttpResponseRedirect('/gems/voterHome')
+    	else:
+    	    return HttpResponse("your account is diabled")		
+    else:
+        # No context variables to pass to the template system, hence the
+        # blank dictionary object...
+        return render(request, 'login.html', {})
 
 @login_required
 def voterHome(request):
+	logger.info('voter home page requested')
 	return render(request, 'main_page.html')
 
 @login_required
@@ -141,6 +147,7 @@ def adminHome(request):
 	electionState = GlobalVariables.objects.filter(varname='electionState')[0].value
 	return render(request, 'adminHome.html', {'electionState': electionState})
 
+
 @login_required
 def create_form(request):
 	if len(Users.objects.filter(username=request.user.username)) != 0:
@@ -171,6 +178,7 @@ def add_form_details(request):
 def add_fields(request):
 	if len(Users.objects.filter(username=request.user.username)) != 0:
 		return HttpResponse('Only administrators are allwoed to access this page!')
+	flag = 0
 	if request.method == "POST":
 		formFields = request.POST.dict()
 		res = []
@@ -184,26 +192,34 @@ def add_fields(request):
 				try:
 					re.compile(validation)
 					is_valid = True
+					f = {"description": formFields[x], "id": "field"+str(len(res)), "type": y, "placeholder": z, "options": options, "validation": validation}
 				except re.error:
 					is_valid = False
-					post_i = Posts.objects.get(postname=post1)
-					Post_data = {
-						"Post_list" : eval(post_i.info_fields),
-						"alert" : "Not a valid regex"
-					}
-					return render(request, 'add-form-details.html', Post_data, context_instance=RequestContext(request))
-				f = {"description": formFields[x], "id": "field"+str(len(res)), "type": y, "placeholder": z, "options": options, "validation": validation}
+					flag = 1
+					field = "field"+str(len(res))
+					f = {"description": formFields[x], "id": "field"+str(len(res)), "type": y, "placeholder": z, "options": options, "validation": ''}
 				res += [f]
 		Posts.objects.filter(postname=post1).update(info_fields=res)
-	return HttpResponseRedirect('/gems/adminHome/create-form')
+	if flag==0:
+		return HttpResponseRedirect('/gems/adminHome/create-form/')
+	else:
+		post_i = Posts.objects.get(postname=post1)
+		Post_data = {
+			"Post_list" : eval(post_i.info_fields),
+			"alert" : "Not a valid regex in " + field
+		}
+		return render(request, 'add-form-details.html', Post_data, context_instance=RequestContext(request))
 
 @login_required
 def add_post(request):
 	if len(Users.objects.filter(username=request.user.username)) != 0:
 		return HttpResponse('Only administrators are allwoed to access this page!')
 	if request.method == "GET":
-		new_post = Posts(postname=request.GET['post_name'],info_fields='[]')
-		new_post.save()
+		if len(Posts.objects.filter(postname=request.GET['post_name'])) == 0:
+			new_post = Posts(postname=request.GET['post_name'],info_fields='[]')
+			new_post.save()
+		else:
+			logging.error('Duplicate Post')
 	return HttpResponseRedirect('/gems/adminHome/create-form')
 
 @login_required
@@ -249,6 +265,7 @@ def view_candidate_information(request):
 			if f['id'] == x:
 				field = f
 				break
+
 		assert(field != None)
 		if field['type'] == 'file':
 			value = "/media/" + UploadedDocuments.objects.filter(id=details[x])[0].document.name
