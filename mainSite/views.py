@@ -20,7 +20,7 @@ from django.contrib.auth import get_user
 from django.contrib import messages
 
 from mainSite.forms import CommentForm
-from .databaseManager import getCandidateDetail, registerUsers
+from .databaseManager import registerUsers
 from gems.settings import BASE_DIR
 
 @login_required
@@ -131,7 +131,15 @@ def registrationform(request):
 def adminHome(request):
 	if len(Users.objects.filter(username=request.user.username)) != 0:
 		return HttpResponse('Only administrators are allwoed to access this page!')
-	return render(request, 'adminHome.html')
+	if request.method == "POST":
+		if "electionState" in request.POST.dict():
+			x = GlobalVariables.objects.filter(varname='electionState')[0]
+			x.value = request.POST.dict()['electionState']
+			x.save()
+			assert(x.value in ['pre-election', 'election', 'post-election'])
+
+	electionState = GlobalVariables.objects.filter(varname='electionState')[0].value
+	return render(request, 'adminHome.html', {'electionState': electionState})
 
 @login_required
 def create_form(request):

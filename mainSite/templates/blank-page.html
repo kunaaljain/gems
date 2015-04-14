@@ -145,7 +145,7 @@
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="/gems/logout"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                            <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
                         </li>
                     </ul>
                 </li>
@@ -196,16 +196,8 @@
         <div id="page-wrapper">
 
             <div class="container-fluid">
-
-                <!-- Page Heading -->
-                <div class="row">
-                    <div class="col-lg-12">
-			{% block content %}
-			{% endblock %}
-                    </div>
-                </div>
-                <!-- /.row -->
-
+                {% block content %}
+                {% endblock %}
             </div>
             <!-- /.container-fluid -->
 
