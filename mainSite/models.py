@@ -62,3 +62,8 @@ class Agenda(models.Model):
 class CommentLikes(models.Model):
 	user = models.ForeignKey(Users)
 	comment = models.ForeignKey(Comments)
+
+class GlobalVariables(models.Model):
+	'''To store miscellaneous global variables such as election state.'''
+	varname = models.CharField(max_length=128, unique=True)
+	value = models.CharField(max_length=128)

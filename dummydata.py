@@ -7,6 +7,11 @@ from django.core.management import call_command
 
  call_command('syncdb', interactive = True)
 
+ #This part is essential to the functioning of the system:
+GlobalVariables(varname='electionState', value='pre-election')
+
+ #This is optional
+
 userList = [{'username':'kayush', 'department':'cse', 'name':'Ayush', 'course':'btech', 'hostel' : 'Siang'},
 		 {'username':'adgfd', 'department':'cse', 'name':'sdg', 'course':'btech', 'hostel' : 'Kameng'},
 		 {'username':'Student1', 'department':'ece', 'name':'Nice Name', 'course':'mtech', 'hostel' : 'Subuansiri'},

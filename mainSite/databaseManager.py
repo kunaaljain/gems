@@ -52,6 +52,8 @@ def addUser(username, department, name, course, password, voted=False):
 
 #---------------------------------
 def makeCandidate(username, details, postname, photo, approved=False):
+	if GlobalVariables.objects.filter(varname='electionState') != 'pre-election':
+		return False
 	if len(Users.objects.filter(username=username)) == 0:
 		 return False
 	else:
@@ -67,6 +69,8 @@ def makeCandidate(username, details, postname, photo, approved=False):
 #---------------------------------
 def registerVote(plainText, username, password):
 	"""Register plainText as the vote of user with given username and password"""
+	if GlobalVariables.objects.filter(varname='electionState') != 'election':
+		return False
 	userlist = Users.objects.filter(username=username)
 	#print len(userlist)
 	if (len(userlist) == 0):
@@ -88,82 +92,14 @@ def registerVote(plainText, username, password):
 	p1.save()
 	return True
 
-#---------------------------------
-def loginUser(username, password):
-	if username =='kayush' and password == 'kayush':
-		return True
-	else:
-		return False
-
-#----------------------------------
-
-def getUserDetails(username):
-	details = { 'username':'kayush' , 'voted': True, 'Department':'cse', 'name':'Ayush', 'course':'btech','encryptedPrivateKey':'qwertyuiop' }
-	return details
-
-#-------------------------------
-
-def validateAllVotes():
-	validate = ['True','True' , 'False']
-	return validate
-
-#-----------------------
-
-def getElectionStats():
-	Stats = {'vote-count':{'candidate1':100, 'candidate2':97},'vote-turnout':0.67, 'vote-demographics':{'btech':0.4,'mtech':0.5, 'dual':0.1}}
-	return Stats
-
 #--------------------
-def getWinner(Stats):
-	return 'Candidate1'
-#-------------------
-
-def approveCandidate(username):
-	if username == 'sudhanshu':
-		return True
-	else:
-		return False
-
-#------------------------
-
-def getCandidateDetail(username):
-	details = {'username':'sudhanshu', 'post':'vp', 'picture':'sudhanshu.jpg','form-data':{'agenda':'my agenda', 'position-of-responsibility':'Director of IITG' }}
-	return details
-
-#----------------------
-
 def setCandidateDetails(username):
 	detail = getCandidateDetail(username);
 	# converting dict to json
 	detail = json.dumps(detail)
 	return detail
-#----------------------
-def getElectionState(state):
-	if state == 0:
-		var = 'pre-election'
-	elif state == 1:
-		var = 'during election'
-	else:
-		var = 'post-election'
-	return var
-#-----------------------------
-def setElectionState(state):
-    if state == 0:
-        var = 'pre-election'
-    elif state == 1:
-        var = 'during election'
-    else:
-        var = 'post-election'
-#-------------------------
-def getCandidatePost(postId):
-	post = {'vp':{'candidate1':'Ayush ', 'Candidate2':'Sudhanshu'}, 'welfare':{'candidate1':'Ayush ', 'Candidate2':'Sudhanshu'}, 'sport':{'candidate1':'Ayush ', 'Candidate2':'Sudhanshu'}}
-	return post
 
-#--------------------------
-def importElectionData(src):
-	stats = {'':''}
-	return stats
-#------------------------
+#--------------------
 def verifyVote(votes):
 	"""Verifies all votes"""
 	for vote in votes:

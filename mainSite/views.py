@@ -2,7 +2,11 @@ import sys
 import re
 import json
 import copy
+import os
+import xlrd
 
+
+from django import forms
 from django.shortcuts import render_to_response, render ,get_list_or_404, get_object_or_404
 from mainSite.models import *
 from django.http import HttpResponse
@@ -10,13 +14,14 @@ from django.template import RequestContext, loader, Context
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.core.context_processors import csrf
-from .databaseManager import getCandidateDetail
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user
+from django.contrib import messages
 
-from mainSite.models import Agenda,Comments,CommentLikes
 from mainSite.forms import CommentForm
+from .databaseManager import getCandidateDetail, registerUsers
+from gems.settings import BASE_DIR
 
 @login_required
 def user_logout(request):
@@ -24,26 +29,26 @@ def user_logout(request):
 	return HttpResponseRedirect('/gems')
 
 def user_login(request):                      #url for login page is home/login
-    if request.method == 'POST':
-    	username= request.POST.get('username')
-    	password = request.POST.get('password')
-    	user = authenticate(username=username,password=password)
-    	if user:
-    	    if (user.is_active and user.is_staff):
-    	        login(request, user)
-    	        if len(Users.objects.filter(username=username)) == 0:
-    	        	return HttpResponseRedirect('/gems/adminHome')
-    	        else:
-    	        	return HttpResponseRedirect('/gems/voterHome')
-    	    else:
-                login(request, user)
-                return HttpResponseRedirect('/gems/voterHome')
-    	else:
-    	    return HttpResponse("your account is diabled")		
-    else:
-        # No context variables to pass to the template system, hence the
-        # blank dictionary object...
-        return render(request, 'login.html', {})
+	if request.method == 'POST':
+		username= request.POST.get('username')
+		password = request.POST.get('password')
+		user = authenticate(username=username,password=password)
+		if user:
+			if (user.is_active and user.is_staff):
+				login(request, user)
+				if len(Users.objects.filter(username=username)) == 0:
+					return HttpResponseRedirect('/gems/adminHome')
+				else:
+					return HttpResponseRedirect('/gems/voterHome')
+			else:
+				login(request, user)
+				return HttpResponseRedirect('/gems/voterHome')
+		else:
+			return HttpResponse("your account is diabled")		
+	else:
+		# No context variables to pass to the template system, hence the
+		# blank dictionary object...
+		return render(request, 'login.html', {})
 
 @login_required
 def voterHome(request):
@@ -275,59 +280,163 @@ def view_candidate_list(request):
 	return render(request, 'view-candidate-list.html', {'posts': res})
 
 def discuss(request,o_id):
-    '''Discuss Function renders a discussion page for doubts/agendas.It takes input as the request, object id of the agenda
-       For GET request it renders the page discuss.html with existing agenda and comments with a form for new Comment.
-       For POST Request it checks for the validity of the comment, sets the no. of like to zero and adds to the database.'''
-    commentForm = CommentForm()
-    c = {}
-    c.update(csrf(request))
-    agenda = get_object_or_404(Agenda,id=o_id)
-    tempUser = Users.objects.filter(id=get_user(request).id)
-    
-    candidateName = agenda.candidate.name
-    candidateObj = Candidates.objects.filter(username=agenda.candidate.username)[0]
-    candidatePost = candidateObj.postname
+	'''Discuss Function renders a discussion page for doubts/agendas.It takes input as the request, object id of the agenda
+	   For GET request it renders the page discuss.html with existing agenda and comments with a form for new Comment.
+	   For POST Request it checks for the validity of the comment, sets the no. of like to zero and adds to the database.'''
+	commentForm = CommentForm()
+	c = {}
+	c.update(csrf(request))
+	agenda = get_object_or_404(Agenda,id=o_id)
+	tempUser = Users.objects.filter(id=get_user(request).id)
+	
+	candidateName = agenda.candidate.name
+	candidateObj = Candidates.objects.filter(username=agenda.candidate.username)[0]
+	candidatePost = candidateObj.postname
 
-    show = True                 #show variable is to ensure that only those people who have logged in can see the like button.
-    if len(tempUser) == 0:
-        show = False
-    if request.method=='POST':
-        commentForm =CommentForm(request.POST)
-        if commentForm.is_valid():
-            tempComment = Comments()
-            tempComment.content = commentForm.cleaned_data['content']
-            try:
-                tempComment.author = Users.objects.get(id=get_user(request).id)
-            except:
-                print "User not found."
-            tempComment.likes = 0
-            tempComment.save()
-            agenda.comments.add(tempComment)
-    Anonymous = "Anonymous"
-    comments = agenda.comments.all()
-    c.update({'agenda':agenda,'comments':comments,'commentForm':commentForm,'Anonymous':Anonymous,'show':show, 'candidateName': candidateName, 'candidatePost': candidatePost, 'candidateUsername': agenda.candidate.username})
-    return render(request,'discuss.html',c)
+	show = True                 #show variable is to ensure that only those people who have logged in can see the like button.
+	if len(tempUser) == 0:
+		show = False
+	if request.method=='POST':
+		commentForm =CommentForm(request.POST)
+		if commentForm.is_valid():
+			tempComment = Comments()
+			tempComment.content = commentForm.cleaned_data['content']
+			try:
+				tempComment.author = Users.objects.get(id=get_user(request).id)
+			except:
+				print "User not found."
+			tempComment.likes = 0
+			tempComment.save()
+			agenda.comments.add(tempComment)
+	Anonymous = "Anonymous"
+	comments = agenda.comments.all()
+	c.update({'agenda':agenda,'comments':comments,'commentForm':commentForm,'Anonymous':Anonymous,'show':show, 'candidateName': candidateName, 'candidatePost': candidatePost, 'candidateUsername': agenda.candidate.username})
+	return render(request,'discuss.html',c)
 
 #ab1a507dd0eee136e381
 
 @login_required
 def addLikes(request,c_id):
-    '''AddLikes takes input as the request and comment id (c_id) in it's parameters, it then checks whether the user has previously liked
-       the comment ,if not it adds the like and also store the user-comment_like relationship in the database.
-       For future use functionality can be added to show who all has liked the comment.'''
-    try:
-        comment = Comments.objects.get(id=c_id)
-        agenda = Agenda.objects.filter(comments=comment)[0]
-        currentUser = Users.objects.filter(id=get_user(request).id)[0]
-        if len(CommentLikes.objects.filter(comment=comment,user=currentUser)) == 0:
-            obj = CommentLikes()
-            obj.comment,obj.user = comment,currentUser
-            a = comment.likes
-            comment.likes = comment.likes + 1
-            b = comment.likes
-            comment.save()
-            obj.save()
-        return HttpResponseRedirect(reverse('discuss',kwargs={'o_id':agenda.id}))
-    except Comments.DoesNotExist:
-        raise  Http404
-    return render(request,'test.html')
+	'''AddLikes takes input as the request and comment id (c_id) in it's parameters, it then checks whether the user has previously liked
+	   the comment ,if not it adds the like and also store the user-comment_like relationship in the database.
+	   For future use functionality can be added to show who all has liked the comment.'''
+	try:
+		comment = Comments.objects.get(id=c_id)
+		agenda = Agenda.objects.filter(comments=comment)[0]
+		currentUser = Users.objects.filter(id=get_user(request).id)[0]
+		if len(CommentLikes.objects.filter(comment=comment,user=currentUser)) == 0:
+			obj = CommentLikes()
+			obj.comment,obj.user = comment,currentUser
+			a = comment.likes
+			comment.likes = comment.likes + 1
+			b = comment.likes
+			comment.save()
+			obj.save()
+		return HttpResponseRedirect(reverse('discuss',kwargs={'o_id':agenda.id}))
+	except Comments.DoesNotExist:
+		raise  Http404
+	return render(request,'test.html')
+
+class ExcelDocumentForm(forms.Form):
+    docfile = forms.FileField(
+        label='Select a file'
+    )
+
+def __excelFilecheck__(path):
+    workbook = xlrd.open_workbook(path)   
+    worksheet = workbook.sheet_by_name('Sheet1')
+    num_rows = worksheet.nrows - 1
+    num_cells = worksheet.ncols - 1
+    curr_row = 0
+
+    while curr_row < num_rows:
+        curr_row += 1
+        row = worksheet.row(curr_row)
+        i=1
+        for i in xrange(1,4):
+            s=worksheet.cell_value(curr_row, i).encode('ascii')
+        if any(i.isdigit() for i in s)=="True":
+            return 1
+        else:
+            pass
+
+    return 0
+
+@login_required
+def register_users(request):
+	if len(Users.objects.filter(username=request.user.username)) != 0:
+		return HttpResponse("Only administrators are allowed to access this page!")
+
+	userlist=[]
+	# Handle file upload
+	if request.method == 'POST':
+		if 'userlist' in  request.POST.dict(): #we register the new users
+			print registerUsers(eval(request.POST.dict()['userlist']))
+			return HttpResponseRedirect('/gems/adminHome/register-users')
+
+		form = ExcelDocumentForm(request.POST, request.FILES)
+		if form.is_valid():
+			newdoc = UploadedDocuments(document = request.FILES['docfile'])
+			print request.FILES['docfile'].__dict__
+			
+			if request.FILES['docfile'].__dict__['content_type']=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+				newdoc.save()
+				#messages.error(request, 'Upload Successfull')
+				
+
+				path=os.path.join(BASE_DIR, 'media/%s'%newdoc.document.name)
+				val = __excelFilecheck__(path)
+				if val==1:
+					message.error(request,'File contains alphanumeric strings,correct it and Upload again')
+				else:
+
+					workbook = xlrd.open_workbook(path)   
+					worksheet = workbook.sheet_by_name('Sheet1')
+					num_rows = worksheet.nrows - 1
+					num_cells = worksheet.ncols - 1
+					curr_row = 1
+					if num_cells != 3:
+						messages.error(request, 'Expected four columns, but '+str(num_cells)+' columns found. Please check your excel file.')
+						return HttpResponseRedirect('/gems/adminHome/register-users')
+
+					while curr_row < num_rows:
+						curr_row += 1
+						row = worksheet.row(curr_row)
+
+						user={}
+						user['username']=worksheet.cell_value(curr_row, 0).encode('ascii')
+						user['department']=worksheet.cell_value(curr_row, 1).encode('ascii')
+						user['name']=worksheet.cell_value(curr_row, 2).encode('ascii')
+						user['course']=worksheet.cell_value(curr_row, 3).encode('ascii')
+
+						if user['department'] not in ['cs', 'ee', 'bt', 'cl', 'ce', 'me', 'dd', 'ma', 'ph']:
+							messages.error(request, 'In row: '+str(curr_row)+' second column, a valid department was not found. Please give the correct two letter code. Found: '+user['department'])
+						if user['course'] not in ['btech', 'mtech', 'phd', 'prof', 'other']:
+							messages.error(request, 'In row: '+str(curr_row)+' fourth column, the course name was not understood. Please enter one of btech, mtech, phd, prof, other'+user['course'])
+
+						if len(Users.objects.filter(username=user['username'])) == 0:
+							userlist.append(user)
+					print userlist
+					#registerUsers(userlist)
+					newdoc.delete()
+			else:
+				messages.error(request, 'Incorrect extension. Please upload an MS Excel file.')
+
+			allUsers = copy.deepcopy(userlist)
+			for newUser in Users.objects.all():
+				user = {}
+				user['username']=newUser.username
+				user['department']=newUser.department
+				user['name']=newUser.name
+				user['course']=newUser.course
+				allUsers.append(user)
+
+			# Redirect to the document list after POST
+			return render(request, 'register-users.html', {'newuserlist': userlist, 'alluserlist': allUsers}, context_instance=RequestContext(request))#HttpResponseRedirect('/gems/adminHome/register-users')
+	else:
+		form = ExcelDocumentForm() # A empty, unbound form
+	
+	
+
+	# Render list page with the documents and the form
+	return render_to_response('register-users.html', context_instance=RequestContext(request))
