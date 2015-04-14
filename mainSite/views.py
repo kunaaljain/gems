@@ -158,6 +158,7 @@ def add_form_details(request):
 def add_fields(request):
 	if len(Users.objects.filter(username=request.user.username)) != 0:
 		return HttpResponse('Only administrators are allwoed to access this page!')
+	flag = 0
 	if request.method == "POST":
 		formFields = request.POST.dict()
 		res = []
@@ -171,18 +172,23 @@ def add_fields(request):
 				try:
 					re.compile(validation)
 					is_valid = True
+					f = {"description": formFields[x], "id": "field"+str(len(res)), "type": y, "placeholder": z, "options": options, "validation": validation}
 				except re.error:
 					is_valid = False
-					post_i = Posts.objects.get(postname=post1)
-					Post_data = {
-						"Post_list" : eval(post_i.info_fields),
-						"alert" : "Not a valid regex"
-					}
-					return render(request, 'add-form-details.html', Post_data, context_instance=RequestContext(request))
-				f = {"description": formFields[x], "id": "field"+str(len(res)), "type": y, "placeholder": z, "options": options, "validation": validation}
+					flag = 1
+					field = "field"+str(len(res))
+					f = {"description": formFields[x], "id": "field"+str(len(res)), "type": y, "placeholder": z, "options": options, "validation": ''}
 				res += [f]
 		Posts.objects.filter(postname=post1).update(info_fields=res)
-	return HttpResponseRedirect('/gems/adminHome/create-form')
+	if flag==0:
+		return HttpResponseRedirect('/gems/adminHome/create-form/')
+	else:
+		post_i = Posts.objects.get(postname=post1)
+		Post_data = {
+			"Post_list" : eval(post_i.info_fields),
+			"alert" : "Not a valid regex in " + field
+		}
+		return render(request, 'add-form-details.html', Post_data, context_instance=RequestContext(request))
 
 @login_required
 def add_post(request):
@@ -208,7 +214,7 @@ def view_candidate_information(request):
 		candidate.approved = not candidate.approved
 		candidate.save()
 		return HttpResponseRedirect('/gems/candidates/view-candidate-list')
-
+		
 	candidate_username = request.GET['user']
 	candidate = Candidates.objects.filter(username=candidate_username)
 	if len(candidate) == 0:# or candidate[0].approved == False:
@@ -236,6 +242,7 @@ def view_candidate_information(request):
 			if f['id'] == x:
 				field = f
 				break
+
 		assert(field != None)
 		if field['type'] == 'file':
 			value = "/media/" + UploadedDocuments.objects.filter(id=details[x])[0].document.name
