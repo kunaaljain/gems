@@ -60,6 +60,8 @@ def makeCandidate(username, details, postname, photo, approved=False):
 		assert(len(details) != 0)
 		p1 = Candidates(username=username, details=details, postname=postname, photo=photo, approved=approved)
 		p1.save()
+
+		a1 = Agenda(candidate=Users.objects.filter(username=username)[0], content='.')
 		return True
 
 #---------------------------------

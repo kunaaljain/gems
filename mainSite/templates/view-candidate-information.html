@@ -3,8 +3,12 @@
 
                         <h1 class="page-header">
                             Candidate Information
-                            <small>{{ username }}</small>
                         </h1>
+                        <h3>{{candidateName}} - <small>{{username}}@iitg.ernet.in</small></h3>
+                        <br/>
+                        <form action="/gems/candidates/view-candidate-information" method="post">
+                            {% csrf_token %}
+                        
             <img src="{{photo}}" width="200px" height="300px"></img>
 
             {% for detail in details %}
@@ -16,4 +20,13 @@
                 {% endif %}
                 </h3>
             {% endfor %}
+            <input type="hidden" name="username" value="{{username}}"/>
+                {% if isAdmin %}
+                    {% if isApproved %}
+                        <button type="submit" class="btn btn-success">Approve Candidate</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-danger">Disapprove Candidate</button>
+                    {% endif %}
+                {% endif %}
+            </form>
 {% endblock %}
