@@ -4,6 +4,7 @@ from mainSite.models import Candidates
 from mainSite import views
 
 urlpatterns = patterns('',
+	url(r'^logout$', views.user_logout),
 	url(r'^register/$', views.register),
 	url(r'^register/form/', views.registrationform),
 	url(r'^voterHome$', views.voterHome),

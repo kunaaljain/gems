@@ -52,14 +52,15 @@
                             <div class="panel-heading">                                
                                     <div class="row">
 									<div class="col-xs-12 text-middle">
-                                        <h3 align="center">AGENDA</h3>
+                                        <h3 align="center">{{candidateName}} for {{candidatePost}}</h3>
 									</div>
 									</div>
 							</div>
 						   <div class="panel-body">
-                                <p>
-								{{agenda.content}}
-								</p>
+						   		<center>
+						   			<a href="/gems/candidates/view-candidate-information?user={{candidateUsername}}"><div class="btn btn-primary">Candidate Information</div></a>
+						   			<a href="/gems/candidates/view-candidate-list"><div class="btn btn-primary">All Candidates</div></a>
+						   		</center>
                             </div>
                         </div>
                     </div>
