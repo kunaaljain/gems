@@ -72,12 +72,13 @@ def voterView(request):
 			jsonDict = {}
 			for item in votablePosts:
 				candidatesVoted = request.POST.getlist(item['postName'])
+				candidatesVoted = []
+				candidates = Candidates.objects.filter(postname=item['postName'])
+				for candidate in candidates:
+					if request.POST.get(candidate.postname + '.' + candidate.username):
+						candidatesVoted.append(candidate.username)
+				print candidatesVoted
 				jsonDict[item['postName']] = candidatesVoted
-				for candidate in candidatesVoted:
-					candObj = Candidates.objects.all()
-					candObj = candObj.filter(username=candidate.username)
-					candObj.noOfVotes = candObj.noOfVotes + 1
-					candObj.save()
 			jsonStr = json.dumps(jsonDict)
 			#registerVote(jsonStr,voterDetail.name,request.POST.get('alertInput'))
 			contextObj = Context()
@@ -87,8 +88,29 @@ def voterView(request):
 			voteStr = request.POST.dict()['votes']
 			if not request.user.check_password(password):
 				return render(request, 'votingpage.html', {'takePassword': True, 'votes': voteStr, 'passwordIncorrect': True})
-			print (voteStr, request.user.username, password)
+			voter = Users.objects.filter(username=request.user.username)[0]
+			if voter.voted:
+				return HttpResponse("You have already cast your vote. You may vote only once.")
+
 			if databaseManager.registerVote(voteStr, request.user.username, password):
+				votes = eval(voteStr)
+				voter.voted = True
+				for post in votes:
+					for candidateName in votes[post]:
+						candidate = Candidates.objects.filter(username=candidateName)[0]
+						if candidate.approved == False:
+							sys.stderr.write("Hack Attempt: User: "+request.users.username+" tried to for an unapproved candidate!.")
+							return HttpResponse("That candidate was not approved. This will be reported!!")
+						assert(len(Candidates.objects.filter(username=candidateName)) == 1)
+						voteInfo = eval(candidate.voteInfo)
+						voteInfo['totVotes'] += 1
+						voteInfo['courseWise'][voter.course] += 1
+						voteInfo['genderWise'][voter.gender] += 1
+						voteInfo['departmentWise'][voter.department] += 1
+						voteInfo['hostelWise'][voter.hostel] += 1
+						candidate.voteInfo = json.dumps(voteInfo)
+						candidate.save()
+
 				return HttpResponseRedirect('/gems/voterHome')
 			else:
 				return HttpResponse('Encountered an error while registering vote. The election has not started yet.')
@@ -156,7 +178,6 @@ def registrationform(request):
 					field = candidate_field
 					break
 			assert(field != None)
-			print field
 			reMatch = re.compile(field['validation']+'$')
 			if not reMatch.match(files[doc]._name):
 				postname = request.GET.get('postname')
@@ -221,7 +242,8 @@ def add_form_details(request):
 	Post_data = {
 		"Post_list" : eval(post_i.info_fields),
 		"eligibleGender": post_i.eligibleGender,
-			"eligibleCourse": post_i.eligibleCourse
+		"eligibleCourse": post_i.eligibleCourse,
+		"postname": post1
 	}
 	return render_to_response('add-form-details.html', Post_data, context_instance=RequestContext(request))
 
@@ -250,17 +272,23 @@ def add_fields(request):
 					field = "field"+str(len(res))
 					f = {"description": formFields[x], "id": "field"+str(len(res)), "type": y, "placeholder": z, "options": options, "validation": ''}
 				res += [f]
-		post1 = request.POST.dict()['course']
-		Posts.objects.filter(postname=post1).update(info_fields=res, eligibleGender=formFields['eligibleGender'], eligibleCourse=formFields["eligibleCourse"])
+		post1 = request.POST.dict()['postname']
+		post=Posts.objects.filter(postname=post1)[0]
+		post.info_fields=res
+		post.eligibleGender=formFields['eligibleGender']
+		post.eligibleCourse=formFields["eligibleCourse"]
+		post.save()
 	if flag==0:
 		return HttpResponseRedirect('/gems/adminHome/create-form')
 	else:
 		post_i = Posts.objects.get(postname=post1)
+
 		Post_data = {
 			"Post_list" : eval(post_i.info_fields),
 			"alert" : "Not a valid regex in " + field,
 			"eligibleGender": post_i.eligibleGender,
-			"eligibleCourse": post_i.eligibleCourse
+			"eligibleCourse": post_i.eligibleCourse,
+			"postname": post1
 		}
 		return render(request, 'add-form-details.html', Post_data, context_instance=RequestContext(request))
 
@@ -450,32 +478,29 @@ def register_users(request):
 	# Handle file upload
 	if request.method == 'POST':
 		if 'userlist' in  request.POST.dict(): #we register the new users
-			print registerUsers(eval(request.POST.dict()['userlist']))
+			print registerUsers(eval(request.POST.dict()['userlist'])), "26463"
 			return HttpResponseRedirect('/gems/adminHome/register-users')
 
 		form = ExcelDocumentForm(request.POST, request.FILES)
 		if form.is_valid():
 			newdoc = UploadedDocuments(document = request.FILES['docfile'])
-			print request.FILES['docfile'].__dict__
 			
-			if request.FILES['docfile'].__dict__['content_type']=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+			if request.FILES['docfile'].__dict__['content_type'] == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+				#return HttpResponse('Incorrect file type. Please upload an MS Excel file.')
+				#else:
 				newdoc.save()
-				#messages.error(request, 'Upload Successfull')
-				
-
 				path=os.path.join(BASE_DIR, 'media/%s'%newdoc.document.name)
 				val = __excelFilecheck__(path)
 				if val==1:
 					message.error(request,'File contains alphanumeric strings,correct it and Upload again')
 				else:
-
 					workbook = xlrd.open_workbook(path)   
 					worksheet = workbook.sheet_by_name('Sheet1')
 					num_rows = worksheet.nrows - 1
 					num_cells = worksheet.ncols - 1
-					curr_row = 1
-					if num_cells != 3:
-						messages.error(request, 'Expected four columns, but '+str(num_cells)+' columns found. Please check your excel file.')
+					curr_row = 0
+					if num_cells != 5:
+						messages.error(request, 'Expected six columns, but '+str(num_cells+1)+' columns found. Please check your excel file.')
 						return HttpResponseRedirect('/gems/adminHome/register-users')
 
 					while curr_row < num_rows:
@@ -488,17 +513,19 @@ def register_users(request):
 						user['name']=worksheet.cell_value(curr_row, 2).encode('ascii')
 						user['course']=worksheet.cell_value(curr_row, 3).encode('ascii')
 						user['gender']=worksheet.cell_value(curr_row, 4).encode('ascii')
+						user['hostel']=worksheet.cell_value(curr_row, 5).encode('ascii')
 
 						if user['department'] not in ['cs', 'ee', 'bt', 'cl', 'ce', 'me', 'dd', 'ma', 'ph']:
 							messages.error(request, 'In row: '+str(curr_row)+' second column, a valid department was not found. Please give the correct two letter code. Found: '+user['department'])
 						if user['course'] not in ['btech', 'mtech', 'phd', 'prof', 'other']:
 							messages.error(request, 'In row: '+str(curr_row)+' fourth column, the course name was not understood. Please enter one of btech, mtech, phd, prof, other. Found: '+user['course'])
-						if user['course'] not in ['m', 'f']:
-							messages.error(request, 'In row: '+str(curr_row)+' fourth column, please give either "m" or "f" for gender. Found: '+user['gender'])
+						if user['gender'] not in ['m', 'f']:
+							messages.error(request, 'In row: '+str(curr_row)+' fifth column, please give either "m" or "f" for gender. Found: '+user['gender'])
+						if user['hostel'] not in ['kameng', 'barak', 'umiam', 'manas', 'dihing', 'bramhaputra', 'lohith', 'kapili', 'siang', 'dibang', 'dhansiri', 'subhansiri', 'married-scholars']:
+							messages.error(request, 'In row: '+str(curr_row)+' sixth column, please give a valid hostel name (in small letters). Found: '+user['hostel'])
 
 						if len(Users.objects.filter(username=user['username'])) == 0:
 							userlist.append(user)
-					print userlist
 					#registerUsers(userlist)
 					newdoc.delete()
 			else:
@@ -511,14 +538,40 @@ def register_users(request):
 				user['department']=newUser.department
 				user['name']=newUser.name
 				user['course']=newUser.course
+				user['gender']=newUser.gender
+				user['hostel']=newUser.hostel
 				allUsers.append(user)
 
 			# Redirect to the document list after POST
-			return render(request, 'register-users.html', {'newuserlist': userlist, 'alluserlist': allUsers}, context_instance=RequestContext(request))#HttpResponseRedirect('/gems/adminHome/register-users')
-	else:
-		form = ExcelDocumentForm() # A empty, unbound form
+			return render(request, 'register-users.html', {'newuserlist': userlist, 'alluserlist': allUsers}, context_instance=RequestContext(request))
 	
 	
-
+	allUsers = copy.deepcopy(userlist)
+	for newUser in Users.objects.all():
+		user = {}
+		user['username']=newUser.username
+		user['department']=newUser.department
+		user['name']=newUser.name
+		user['course']=newUser.course
+		user['gender']=newUser.gender
+		user['hostel']=newUser.hostel
+		allUsers.append(user)
 	# Render list page with the documents and the form
-	return render_to_response('register-users.html', context_instance=RequestContext(request))
+	return render(request, 'register-users.html', {'alluserlist': allUsers})
+
+@login_required
+def results_page(request):
+	tally = {}
+	for candidate in Candidates.objects.all():
+		if not candidate.postname in tally:
+			tally[candidate.postname] = []
+		candidateName = Users.objects.filter(username=candidate.username)[0].name
+		tally[candidate.postname] += [(candidateName, eval(candidate.voteInfo)['totVotes'])]
+
+	res = []
+	for postname in tally:
+		post = Posts.objects.filter(postname=postname)[0]
+		res += [(postname, len(tally[postname]), post.postCount, tally[postname], '#')]
+	print res
+
+	return render(request, 'election-results.html', {'stats': res, "NoOfVotes": 10})

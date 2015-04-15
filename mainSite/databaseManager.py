@@ -31,7 +31,7 @@ def registerUsers(userList):
 		newChallengeStr = ChallengeStrings(challengeStr=challengeStr)
 		newChallengeStr.save()
 
-		newPublicKey = addUser(userList[i]['username'], userList[i]['department'], userList[i]['name'], userList[i]['course'], userList[i]['gender'], passwords[i])
+		newPublicKey = addUser(userList[i]['username'], userList[i]['department'], userList[i]['name'], userList[i]['course'], userList[i]['gender'], userList[i]['hostel'], passwords[i])
 
 		publicKeys += [newPublicKey]
 		user = User.objects.create_user(username = userList[i]['username'], password = passwords[i])
@@ -45,13 +45,13 @@ def registerUsers(userList):
 
 	return passwords
 
-def addUser(username, department, name, course, gender, password, voted=False):
+def addUser(username, department, name, course, gender, hostel, password, voted=False):
 	'''Registers new user with the system including signature key generation and registration'''
 	#generate private key
 	key = RSA.generate(2048)
 	encryptedPrivateKey = cryptography.symmetricEncrypt(key.exportKey(), password)
 
-	p1 = Users(username=username, voted=voted, department=department, name=name, course=course, encryptedPrivateKey=encryptedPrivateKey, gender=gender)
+	p1 = Users(username=username, voted=voted, department=department, name=name, course=course, encryptedPrivateKey=encryptedPrivateKey, gender=gender, hostel=hostel)
 	p1.save()
 	return key.publickey().exportKey()
 
@@ -65,7 +65,8 @@ def makeCandidate(username, details, postname, photo, approved=False):
 		assert(len(Users.objects.filter(username=username)) == 1)
 		#assert(approved == False)
 		assert(len(details) != 0)
-		p1 = Candidates(username=username, details=details, postname=postname, photo=photo, approved=approved)
+		voteInfo = "{'totVotes':0, 'courseWise': {'btech': 0, 'mtech': 0, 'phd': 0, 'other': 0, 'prof': 0}, 'genderWise': {'m': 0, 'f':0}, 'departmentWise': {'cs':0, 'ee':0, 'bt':0, 'cl':0, 'ce':0, 'me':0, 'dd':0, 'ma':0, 'ph':0}, 'hostelWise': {'kameng':0, 'barak':0, 'umiam':0, 'manas':0, 'dihing':0, 'bramhaputra':0, 'lohith':0, 'kapili':0, 'siang':0, 'dibang':0, 'dhansiri':0, 'subhansiri':0, 'married-scholars':0}}"
+		p1 = Candidates(username=username, details=details, postname=postname, photo=photo, approved=approved, voteInfo='[]')
 		p1.save()
 
 		a1 = Agenda(candidate=Users.objects.filter(username=username)[0], content='.')
@@ -95,6 +96,7 @@ def registerVote(plainText, username, password):
 	'''get a random number'''
 	p1 = Votes(plainText=plainText, certificate=certificate, publicKey=publicKey, challengeStr = challenobj[rannum])
 	p1.save()
+
 	return True
 
 

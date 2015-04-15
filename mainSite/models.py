@@ -25,6 +25,7 @@ class Candidates(models.Model):
 	postname = models.CharField(max_length=50)
 	photo = models.FileField(upload_to='documents/candidate_photos/%Y/%m/%d')
 	approved = models.BooleanField()
+	voteInfo = models.CharField(max_length=500)
 	def __unicode__(self):
         	return self.username
 

@@ -13,10 +13,10 @@ GlobalVariables(varname='electionState', value='pre-election').save()
 
  #This is optional
 
-userList = [{'username':'kayush', 'department':'cse', 'name':'Ayush', 'course':'btech', 'hostel' : 'Siang', 'gender': 'm'},
-		 {'username':'adgfd', 'department':'cse', 'name':'sdg', 'course':'btech', 'hostel' : 'Kameng', 'gender': 'm'},
-		 {'username':'Student1', 'department':'ece', 'name':'Nice Name', 'course':'mtech', 'hostel' : 'Subuansiri', 'gender': 'f'},
-		 {'username':'Student2', 'department':'des', 'name':'Hiyaa', 'course':'phd', 'hostel' : 'Siang', 'gender': 'm'}
+userList = [{'username':'kayush', 'department':'cs', 'name':'Ayush', 'course':'btech', 'hostel' : 'siang', 'gender': 'm'},
+		 {'username':'adgfd', 'department':'cs', 'name':'sdg', 'course':'btech', 'hostel' : 'kameng', 'gender': 'm'},
+		 {'username':'Student1', 'department':'ee', 'name':'Nice Name', 'course':'mtech', 'hostel' : 'subuansiri', 'gender': 'f'},
+		 {'username':'Student2', 'department':'dd', 'name':'Hiyaa', 'course':'phd', 'hostel' : 'siang', 'gender': 'm'}
 		]
 
 passy = databaseManager.registerUsers(userList)
@@ -34,3 +34,5 @@ post.save()
 
 #sampe post info_fields
 #[{'description': u'Name', 'type': u'text', 'id': 'field0', 'validation': u'', 'placeholder': u'Your Name', 'options': u''}, {'description': u'Date of Birth', 'type': u'text', 'id': 'field1', 'validation': u'[0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9]', 'placeholder': u'DOB - dd-mm-yyyy', 'options': u''}, {'description': u'Agenda', 'type': u'file', 'id': 'field2', 'validation': u'.*.pdf', 'placeholder': u'', 'options': u''}]
+
+#['d729aa3485637e8d384d', '5b36e6efa123f7003717', 'cd7ba755452a311d311c']
