@@ -422,6 +422,10 @@ class ExcelDocumentForm(forms.Form):
     )
 
 def __excelFilecheck__(path):
+'''This function checks whether the excel file uploaded is in proper format (as we require) or not.If file is not 
+   in correct format,it informs user the same.Correct format here means that fields such as department,course,name 
+   shouldn't contain any alphanumeric string.'''
+		
     workbook = xlrd.open_workbook(path)   
     worksheet = workbook.sheet_by_name('Sheet1')
     num_rows = worksheet.nrows - 1
