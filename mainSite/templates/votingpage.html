@@ -1,0 +1,221 @@
+
+{% extends "blank-page.html" %}
+{% load staticfiles %}
+{% block content %}
+
+<div class="tabbable"> <!-- Only required for left/right tabs -->
+  <ul class="nav nav-tabs">
+
+      {% for post in data %}
+          {% if forloop.first %}
+            <li class="active"><a href="#tab{{ forloop.revcounter }}" data-toggle="tab">{{ post.post }}</a></li>
+          {% else %}
+            <li><a href="#tab{{ forloop.revcounter }}" data-toggle="tab">{{ post.post }}</a></li>
+          {% endif %}
+      {% endfor %}
+
+
+  </ul>
+</div>
+
+{% if not takePassword %}
+    <form action="/gems/voterHome/voting-page" method="post">
+    {% csrf_token %}
+      <div class="tab-content">
+
+          {% for post in data %}
+
+           {% if forloop.first %}
+                <div class="tab-pane active" id="tab{{ forloop.revcounter }}">
+                <p>Vote for {{ post.post }}</p>
+
+                <div data-toggle="checkboxes" data-max={{ post.postcount }}>
+                <ul>
+                {% for cand in post.candidates %}
+                    <label onclick="return check()"><input type="checkbox" name="{{ post.post }}.{{ cand }}" id="{{ forloop.revcounter }}"> {{ cand }}</label><br>
+
+                {% endfor %}
+                    <label onclick="return check()"><input type="checkbox" name="nota" id="0">NOTA</label>
+                </ul>
+                </div>
+                </div>
+            {% else %}
+                <div class="tab-pane" id="tab{{ forloop.revcounter }}">
+                <p>Vote for {{ post.post }}</p>
+                <ul>
+                {% for cand in post.candidates %}
+                    <label onclick="return check()"><input type="checkbox" name="{{ post.post }}.{{ cand }}" id="{{ forloop.revcounter }}"> {{ cand }}</label><br>
+
+                {% endfor %}
+                <label onclick="return check()"><input type="checkbox" name="nota" id="0">NOTA</label>
+                </ul>
+                </div>
+            {% endif %}
+            {% endfor %}
+            <button type="submit" id="submit" class="btn btn-default" disabled>Submit</button>
+           <a href="#" id="prv" class="btn btn-primary">&lt;&lt;Previous</a>
+          <a href="#" id="nxt" class="btn btn-primary">Next>></a>
+
+
+      </div>
+    </form>
+{% else %}
+        <form action="/gems/voterHome/voting-page" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="votes" value="{{votes}}"/>
+            <input type="password" class="form-control" name="password"/>
+            {% if incorrectPassword %}
+                <span class="label label-important">The password you gave is incorrect</span>
+                <br/>
+            {% endif %}
+            <br/>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+{% endif %}
+
+<script type="text/javascript" src="{% static "js/jquery.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/jquery.min.js" %}"></script>
+    <script src="{% static "js/jquery.init.js" %}"></script>
+<script type="text/javascript">
+
+
+
+$('#nxt').click(function () {
+    $('.nav-tabs > .active').next('li').find('a').trigger('click');
+});
+$('#prv').click(function () {
+    $('.nav-tabs > .active').prev('li').find('a').trigger('click');
+});
+
+
+
+function GetElementInsideContainer(containerID, childID) {
+    var elm = {};
+    var elms = document.getElementById(containerID).getElementsByTagName("*");
+    for (var i = 0; i < elms.length; i++) {
+        if (elms[i].id === childID) {
+            elm = elms[i];
+            break;
+        }
+    }
+    return elm;
+}
+
+function check()
+{
+    var i = 1, j=0;
+    var str1="tab";
+    var success = new Array;
+
+    while(1)
+    {
+        obj=document.getElementById(str1.concat(i));
+        if (!!document.getElementById(str1.concat(i))==0)
+        {
+            break;
+        }
+        else
+        {
+            success[i]=0;
+            j=0;
+            while(1)
+            {
+                e=GetElementInsideContainer(str1.concat(i), j.toString());
+
+
+                if(e.checked)
+                {
+
+                    success[i] = 1;
+                }
+
+                if(!e.id)
+                {
+                    break;
+                }
+                j++;
+            }
+
+        }
+        i++;
+
+    }
+
+
+    var flag=1;
+    for (k=0; k<i; k++)
+    {
+        if(success[k]==0)
+        {
+            flag=0;
+            break;
+        }
+    }
+
+    if(flag==1)
+    {
+        document.getElementById("submit").disabled=false;
+    }
+    else
+    {
+        document.getElementById("submit").disabled=true;
+    }
+}
+
+/*
+function nav(nxtorprv)
+{
+    var currenttab=""
+    var currentdiv=""
+    $('.nav-tabs li').each(function ()
+    {
+        if ($(this).hasClass('active'))
+        {
+            currenttab = $(this);
+
+
+        }
+    });
+    $('.tab-content div').each(function ()
+            {
+                if($(this).hasClass('tab-pane active'))
+                {
+                    currentdiv = $(this);
+                }
+            }
+
+    );
+    if (nxtorprv == "nxt")
+    {
+
+        if (currenttab.next().length)
+        {
+            currenttab.removeClass('active');
+            currenttab.next().addClass('active');
+            currentdiv.removeClass('tab-pane active');
+            currentdiv.addClass('tab-pane');
+            currentdiv.next().addClass('')
+        }
+        else
+        {} // do nothing for now
+
+    }
+    else
+    {
+
+        if (currenttab.prev().length)
+        {
+
+            currenttab.removeClass('active');
+            currenttab.prev().addClass('active');
+        }
+        else
+        {} //do nothing for now
+
+    }
+
+}
+*/
+</script>
+
+{% endblock %}
