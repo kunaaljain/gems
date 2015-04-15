@@ -56,8 +56,8 @@ def addUser(username, department, name, course, password, voted=False):
 
 #---------------------------------
 def makeCandidate(username, details, postname, photo, approved=False):
-	if GlobalVariables.objects.filter(varname='electionState') != 'pre-election':
-		return False
+	# if GlobalVariables.objects.filter(varname='electionState') != 'pre-election':
+	# 	return False
 	if len(Users.objects.filter(username=username)) == 0:
 		 return False
 	else:
@@ -73,8 +73,8 @@ def makeCandidate(username, details, postname, photo, approved=False):
 #---------------------------------
 def registerVote(plainText, username, password):
 	"""Register plainText as the vote of user with given username and password"""
-	if GlobalVariables.objects.filter(varname='electionState') != 'election':
-		return False
+	# if GlobalVariables.objects.filter(varname='electionState') != 'election':
+	# 	return False
 	userlist = Users.objects.filter(username=username)
 	#print len(userlist)
 	if (len(userlist) == 0):
