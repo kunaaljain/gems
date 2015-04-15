@@ -3,7 +3,7 @@ import re
 import json
 import copy
 import os
-import xlrd
+#import xlrd
 
 
 from django import forms
@@ -21,7 +21,7 @@ from django.contrib import messages
 
 from mainSite.forms import CommentForm
 from .databaseManager import registerUsers
-import databaseManager
+from .databaseManager import *
 from gems.settings import BASE_DIR
 import logging
 
@@ -77,7 +77,7 @@ def voterView(request):
 				for candidate in candidates:
 					if request.POST.get(candidate.postname + '.' + candidate.username):
 						candidatesVoted.append(candidate.username)
-				print candidatesVoted
+				#print(candidatesVoted)
 				jsonDict[item['postName']] = candidatesVoted
 			jsonStr = json.dumps(jsonDict)
 			#registerVote(jsonStr,voterDetail.name,request.POST.get('alertInput'))
@@ -411,7 +411,7 @@ def discuss(request,o_id):
 			try:
 				tempComment.author = Users.objects.get(id=get_user(request).id)
 			except:
-				print "User not found."
+				print("User not found.")
 			tempComment.likes = 0
 			tempComment.save()
 			agenda.comments.add(tempComment)
@@ -478,7 +478,7 @@ def register_users(request):
 	# Handle file upload
 	if request.method == 'POST':
 		if 'userlist' in  request.POST.dict(): #we register the new users
-			print registerUsers(eval(request.POST.dict()['userlist'])), "26463"
+			#print registerUsers(eval(request.POST.dict()['userlist'])), "26463"
 			return HttpResponseRedirect('/gems/adminHome/register-users')
 
 		form = ExcelDocumentForm(request.POST, request.FILES)
@@ -572,6 +572,22 @@ def results_page(request):
 	for postname in tally:
 		post = Posts.objects.filter(postname=postname)[0]
 		res += [(postname, len(tally[postname]), post.postCount, tally[postname], '#')]
-	print res
+	#print res
 
 	return render(request, 'election-results.html', {'stats': res, "NoOfVotes": 10})
+
+def candidateStat(request,candidateName):
+	print(candidateName)
+	candObj = Candidates.objects.filter(username=candidateName)
+
+	candStatDict = eval(candObj[0].voteInfo)
+	courseStats = [(x, candStatDict['courseWise'][x])for x in candStatDict['courseWise']]
+	deptStats = [(x,candStatDict['departmentWise'][x])for x in candStatDict['departmentWise']]
+	hostelStats = [(x,candStatDict['hostelWise'][x])for x in candStatDict['hostelWise']]
+	'''
+	deptStats = {'cse':35,'ece':56}
+	courseStats = {('ug',55),('pg',26),('phd',33)}
+	hostelStats = {('umiam',33),('kameng',55),('barak',24)}
+	'''
+	contextObj =Context({'candidatename':candidateName,'deptStats':deptStats,'courseStats':courseStats,'hostelStats':hostelStats})
+	return render_to_response('candidate-wise-stats.html',contextObj)
