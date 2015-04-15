@@ -22,5 +22,6 @@ urlpatterns = patterns('',
 	url(r'^discuss/(?P<o_id>\d+)/$', views.discuss,name='discuss'),
 	url(r'^discuss/list/$', views.discuss_list,name='discuss'),
 	url(r'^addLikes/(?P<c_id>\d+)/$',views.addLikes,name='addLikes'),
-	url(r'^results/results-page$', views.results_page)
+	url(r'^results/results-page$', views.results_page), 
+	url(r'^results/selected-list$', views.selectedCandidates)
  )

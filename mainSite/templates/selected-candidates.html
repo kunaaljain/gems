@@ -1,0 +1,31 @@
+{% extends 'blank-page.html' %}
+{% block content %} 
+<h1 align="center">List of Selected Candidates</h1>
+<table class="table table-hover">
+   <thead>
+      <tr>
+         <th>Post</th>
+         <th>Selected Candidates</th>
+         <th>Number of Votes</th>
+      </tr>
+   </thead>
+   <tbody>
+   {% for item in winnerlist %}
+        {% for winner in item.1 %}
+        <tr>
+            {% ifequal forloop.counter 1 %}
+                <td>{{ item.0 }}</td>
+                <td>{{ winner.0 }}</td>
+                <td>{{ winner.1 }}</td>
+            {% else %}
+                <td></td>
+                <td>{{ winner.0 }}</td>
+                <td>{{ winner.1 }}</td>
+            {% endifequal %}
+        </tr>
+        {% endfor %}
+   {% endfor %}
+   </tbody>
+
+</table>
+{% endblock %}

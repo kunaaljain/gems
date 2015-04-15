@@ -128,3 +128,42 @@ def verifyVote(votes):
 			return value
 	return value
 
+#---------------------
+def getStats():
+	''' getStats() returns the election stats in the form of a list of tuples in the following format 
+	[('Vice President', [('candOne', 400, 'url1')]), 
+	('Senator', [('candFive', 500, 'url2'), ('candSix', 764, 'url3'), ('candSeven', 200, 'url4')]),
+	('Technical Secratary', [('CandFour', 500, 'url5')])]
+	'''
+	postsObj = Posts.objects.all()	
+	for item in postsObj:
+		candStatList = []
+		candCount = 0
+		candObj = Candidates.objects.all()
+		candObj = candObj.filter(contestingPost=postsObj.postName,approved=True)
+		for cand in candObj:
+			temp = (cand.username,cand.noOfVotes,'permaLink')
+			candStatList.append(temp)
+		tup = (postsObj.postName,postsObj.postCount, candCount ,candStatList)
+		candStatList.append(tup)
+	return candStatList
+
+#---------------------
+
+def getWinner(Stats):
+	'''This function gets a stats parameter as returned by getStats()
+	Returns a list in the same format as getStats() except that 
+	it only contains information about the selected candidates
+	and omits the second and third item in the tuples 
+	eg: [('Vice President', [('candOne', 400, 'url1')]), 
+	('Senator', [('candFive', 500, 'url2'), ('candSix', 764, 'url3'), ('candSeven', 200, 'url4')]),
+	('Technical Secratary', [('CandFour', 500, 'url5')])]
+	'''
+	winnerlist = []
+	for post in Stats: 
+		postwinners = []	
+		postwinners = sorted(post[3], key=lambda x: x[1], reverse=True)
+		postwinners = postwinners[:post[1]]		#Create a list with the list of selected candidates for the post
+		tup = (post[0], postwinners)	#Create the tuple corresponding to the post
+		winnerlist.append(tup)		
+	return winnerlist
