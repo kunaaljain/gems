@@ -21,6 +21,7 @@ from django.contrib import messages
 
 from mainSite.forms import CommentForm
 from .databaseManager import registerUsers
+import databaseManager
 from gems.settings import BASE_DIR
 import logging
 
@@ -59,6 +60,54 @@ def user_login(request):                      #url for login page is home/login
 def voterHome(request):
 	logger.info('voter home page requested')
 	return render(request, 'main_page.html')
+
+@login_required
+def voterView(request):
+	if len(Users.objects.filter(username=request.user.username)) == 0:
+		return HttpResponse("Sorry, you are not registered as a voter")
+	if request.method == "POST":
+		if 'password' not in request.POST.dict():
+			voterDetail = Users.objects.filter(username=request.user.username)[0]
+			votablePosts = databaseManager.getVotablePosts(voterDetail.gender, voterDetail.course)
+			jsonDict = {}
+			for item in votablePosts:
+				candidatesVoted = request.POST.getlist(item['postName'])
+				jsonDict[item['postName']] = candidatesVoted
+				for candidate in candidatesVoted:
+					candObj = Candidates.objects.all()
+					candObj = candObj.filter(username=candidate.username)
+					candObj.noOfVotes = candObj.noOfVotes + 1
+					candObj.save()
+			jsonStr = json.dumps(jsonDict)
+			#registerVote(jsonStr,voterDetail.name,request.POST.get('alertInput'))
+			contextObj = Context()
+			return render(request, 'votingpage.html', {'takePassword': True, 'votes': jsonStr})
+		else:
+			password = request.POST.dict()['password']
+			voteStr = request.POST.dict()['votes']
+			if not request.user.check_password(password):
+				return render(request, 'votingpage.html', {'takePassword': True, 'votes': voteStr, 'passwordIncorrect': True})
+			print (voteStr, request.user.username, password)
+			if databaseManager.registerVote(voteStr, request.user.username, password):
+				return HttpResponseRedirect('/gems/voterHome')
+			else:
+				return HttpResponse('Encountered an error while registering vote. The election has not started yet.')
+	else:
+		voterDetail = Users.objects.filter(username=request.user.username)[0]
+		votablePosts = databaseManager.getVotablePosts(voterDetail.gender, voterDetail.course)
+		#contextObj = Context({'votablePosts':votablePosts})
+		postdata= []
+		for postTemp in votablePosts:
+			candidates=Candidates.objects.filter(postname=postTemp['postName'])
+			cList = []
+			for cand in candidates:
+				cList += [cand.username]
+			dat = {}
+			dat['candidates'] = cList
+			dat['post'] = postTemp['postName']
+			dat['postcount'] = postTemp['postCount']
+			postdata += [dat]
+		return render(request, 'votingpage.html',{'data':postdata})
 
 @login_required
 def register(request):
@@ -170,7 +219,9 @@ def add_form_details(request):
 	uid = 0
 	post_i = Posts.objects.get(postname=post1)
 	Post_data = {
-		"Post_list" : eval(post_i.info_fields)
+		"Post_list" : eval(post_i.info_fields),
+		"eligibleGender": post_i.eligibleGender,
+			"eligibleCourse": post_i.eligibleCourse
 	}
 	return render_to_response('add-form-details.html', Post_data, context_instance=RequestContext(request))
 
@@ -199,14 +250,17 @@ def add_fields(request):
 					field = "field"+str(len(res))
 					f = {"description": formFields[x], "id": "field"+str(len(res)), "type": y, "placeholder": z, "options": options, "validation": ''}
 				res += [f]
-		Posts.objects.filter(postname=post1).update(info_fields=res)
+		post1 = request.POST.dict()['course']
+		Posts.objects.filter(postname=post1).update(info_fields=res, eligibleGender=formFields['eligibleGender'], eligibleCourse=formFields["eligibleCourse"])
 	if flag==0:
-		return HttpResponseRedirect('/gems/adminHome/create-form/')
+		return HttpResponseRedirect('/gems/adminHome/create-form')
 	else:
 		post_i = Posts.objects.get(postname=post1)
 		Post_data = {
 			"Post_list" : eval(post_i.info_fields),
-			"alert" : "Not a valid regex in " + field
+			"alert" : "Not a valid regex in " + field,
+			"eligibleGender": post_i.eligibleGender,
+			"eligibleCourse": post_i.eligibleCourse
 		}
 		return render(request, 'add-form-details.html', Post_data, context_instance=RequestContext(request))
 
@@ -216,7 +270,7 @@ def add_post(request):
 		return HttpResponse('Only administrators are allwoed to access this page!')
 	if request.method == "GET":
 		if len(Posts.objects.filter(postname=request.GET['post_name'])) == 0:
-			new_post = Posts(postname=request.GET['post_name'],info_fields='[]')
+			new_post = Posts(postname=request.GET['post_name'],info_fields='[]', postCount=1, eligibleGender='a', eligibleCourse='a')
 			new_post.save()
 		else:
 			logging.error('Duplicate Post')
@@ -433,11 +487,14 @@ def register_users(request):
 						user['department']=worksheet.cell_value(curr_row, 1).encode('ascii')
 						user['name']=worksheet.cell_value(curr_row, 2).encode('ascii')
 						user['course']=worksheet.cell_value(curr_row, 3).encode('ascii')
+						user['gender']=worksheet.cell_value(curr_row, 4).encode('ascii')
 
 						if user['department'] not in ['cs', 'ee', 'bt', 'cl', 'ce', 'me', 'dd', 'ma', 'ph']:
 							messages.error(request, 'In row: '+str(curr_row)+' second column, a valid department was not found. Please give the correct two letter code. Found: '+user['department'])
 						if user['course'] not in ['btech', 'mtech', 'phd', 'prof', 'other']:
-							messages.error(request, 'In row: '+str(curr_row)+' fourth column, the course name was not understood. Please enter one of btech, mtech, phd, prof, other'+user['course'])
+							messages.error(request, 'In row: '+str(curr_row)+' fourth column, the course name was not understood. Please enter one of btech, mtech, phd, prof, other. Found: '+user['course'])
+						if user['course'] not in ['m', 'f']:
+							messages.error(request, 'In row: '+str(curr_row)+' fourth column, please give either "m" or "f" for gender. Found: '+user['gender'])
 
 						if len(Users.objects.filter(username=user['username'])) == 0:
 							userlist.append(user)

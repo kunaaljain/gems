@@ -66,6 +66,12 @@
         .text.ans{
           width:1000px;
         }
+        #page-wrapper{
+          text-align: left;
+        }
+        #wrapper{
+          padding-left: 100px;
+        }
 
         </style>
 
@@ -90,6 +96,57 @@
                   <form action="add-fields" method="post">
                   {%csrf_token%}
                     <input type="hidden" value="{{course}}" name="course">
+                    <div class="form-group">
+                      Gender of Eligible Voters: 
+                      <div class="radio">
+                          <label>
+                              <input type="radio" name="eligibleGender" value="m" {% if eligibleGender == "m" %}checked{% endif %}>Male
+                          </label>
+                      </div>
+                      <div class="radio">
+                          <label>
+                              <input type="radio" name="eligibleGender" value="f" {% if eligibleGender == 'f' %}checked{% endif %}>Female
+                          </label>
+                      </div>
+                      <div class="radio">
+                          <label>
+                              <input type="radio" name="eligibleGender" value="a" {% if eligibleGender == 'a' %}checked{% endif %}>Any
+                          </label>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      Gender of Eligible Voters: 
+                      <div class="radio">
+                          <label>
+                              <input type="radio" name="eligibleCourse" value="btech" {% if eligibleCourse == 'btech' %}checked{% endif %}>B.Tech
+                          </label>
+                      </div>
+                      <div class="radio">
+                          <label>
+                              <input type="radio" name="eligibleCourse" value="mtech" {% if eligibleCourse == 'mtech' %}checked{% endif %}>M.Tech
+                          </label>
+                      </div>
+                      <div class="radio">
+                          <label>
+                              <input type="radio" name="eligibleCourse" value="phd" {% if eligibleCourse == 'phd' %}checked{% endif %}>PhD
+                          </label>
+                      </div>
+                      <div class="radio">
+                          <label>
+                              <input type="radio" name="eligibleCourse" value="other" {% if eligibleCourse == 'other' %}checked{% endif %}>Other
+                          </label>
+                      </div>
+                      <div class="radio">
+                          <label>
+                              <input type="radio" name="eligibleCourse" value="prof" {% if eligibleCourse == 'prof' %}checked{% endif %}>Professor
+                          </label>
+                      </div>
+                      <div class="radio">
+                          <label>
+                              <input type="radio" name="eligibleCourse" value="a" {% if eligibleCourse == 'a' %}checked{% endif %}>Any
+                          </label>
+                      </div>
+                    </div>
                     <div id="formFields">
              
                     </div>

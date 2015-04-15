@@ -5,9 +5,10 @@ from mainSite import views
 
 urlpatterns = patterns('',
 	url(r'^logout$', views.user_logout),
-	url(r'^register$', views.register),
+	url(r'^register/$', views.register),
 	url(r'^register/form', views.registrationform),
 	url(r'^voterHome$', views.voterHome),
+	url(r'^voterHome/voting-page$',views.voterView),
 	url(r'^login$', views.user_login, name='login'),
 	url(r'^adminHome$', views.adminHome, name='adminHome'),
 	url(r'^adminHome/create-form$', views.create_form),

@@ -4,8 +4,9 @@ import json
 import logging
 from Crypto.PublicKey import RSA
 from django.contrib.auth.models import User
+from django.db.models import Q
 
-from models import Users, Candidates,Votes, PublicKeys, ChallengeStrings
+from models import Users, Candidates,Votes, PublicKeys, ChallengeStrings, Posts, GlobalVariables
 import cryptography
 
 logger = logging.getLogger(__name__)
@@ -30,7 +31,7 @@ def registerUsers(userList):
 		newChallengeStr = ChallengeStrings(challengeStr=challengeStr)
 		newChallengeStr.save()
 
-		newPublicKey = addUser(userList[i]['username'], userList[i]['department'], userList[i]['name'], userList[i]['course'], passwords[i])
+		newPublicKey = addUser(userList[i]['username'], userList[i]['department'], userList[i]['name'], userList[i]['course'], userList[i]['gender'], passwords[i])
 
 		publicKeys += [newPublicKey]
 		user = User.objects.create_user(username = userList[i]['username'], password = passwords[i])
@@ -44,13 +45,13 @@ def registerUsers(userList):
 
 	return passwords
 
-def addUser(username, department, name, course, password, voted=False):
+def addUser(username, department, name, course, gender, password, voted=False):
 	'''Registers new user with the system including signature key generation and registration'''
 	#generate private key
 	key = RSA.generate(2048)
 	encryptedPrivateKey = cryptography.symmetricEncrypt(key.exportKey(), password)
 
-	p1 = Users(username=username, voted=voted, department=department, name=name, course=course, encryptedPrivateKey=encryptedPrivateKey)
+	p1 = Users(username=username, voted=voted, department=department, name=name, course=course, encryptedPrivateKey=encryptedPrivateKey, gender=gender)
 	p1.save()
 	return key.publickey().exportKey()
 
@@ -73,7 +74,7 @@ def makeCandidate(username, details, postname, photo, approved=False):
 #---------------------------------
 def registerVote(plainText, username, password):
 	"""Register plainText as the vote of user with given username and password"""
-	if GlobalVariables.objects.filter(varname='electionState') != 'election':
+	if GlobalVariables.objects.filter(varname='electionState')[0].value != 'election':
 		return False
 	userlist = Users.objects.filter(username=username)
 	#print len(userlist)
@@ -96,12 +97,23 @@ def registerVote(plainText, username, password):
 	p1.save()
 	return True
 
+
+
 #--------------------
 def setCandidateDetails(username):
 	detail = getCandidateDetail(username);
 	# converting dict to json
 	detail = json.dumps(detail)
 	return detail
+
+#--------------------
+def getVotablePosts(voterGender,voterCourse):
+	postsObj = Posts.objects.filter(Q(eligibleGender=voterGender) | Q(eligibleGender='a'))
+	postsObj = postsObj.filter(Q(eligibleCourse=voterCourse) | Q(eligibleCourse='a'))
+	postsDictList = []
+	for item in postsObj:
+		postsDictList.append({'postName':item.postname,'postCount':item.postCount,'voterGender':item.eligibleGender,'voterCourse':item.eligibleCourse})
+	return postsDictList
 
 #--------------------
 def verifyVote(votes):
@@ -112,3 +124,4 @@ def verifyVote(votes):
 			print error
 			return value
 	return value
+

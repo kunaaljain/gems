@@ -8,6 +8,7 @@ class Users(models.Model):
 	department = models.CharField(max_length=100)
 	name = models.CharField(max_length=50)
 	course = models.CharField(max_length=30)
+	gender = models.CharField(max_length=1) #either 'm' or 'f'
 	hostel = models.CharField(max_length=30)
 	encryptedPrivateKey = models.CharField(max_length=4096)
 	'''Non empty only when user is logged in'''
@@ -41,6 +42,9 @@ class PublicKeys(models.Model):
 	publicKey = models.CharField(max_length=2048)
 
 class Posts(models.Model):
+	eligibleGender = models.CharField(max_length=1) #either 'm' or 'f'
+	eligibleCourse = models.CharField(max_length=5) #either 'btech', 'mtech', 'phd', 'other', 'prof' or 'a'
+	postCount = models.IntegerField()
 	postname = models.CharField(max_length=50)
 	info_fields = models.CharField(max_length=10000)
 	def __unicode__(self):
