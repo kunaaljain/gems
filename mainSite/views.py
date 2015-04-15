@@ -273,7 +273,7 @@ def add_post(request):
 			new_post = Posts(postname=request.GET['post_name'],info_fields='[]', postCount=1, eligibleGender='a', eligibleCourse='a')
 			new_post.save()
 		else:
-			logging.error('Duplicate Post')
+			return HttpResponse('Duplicate Post')
 	return HttpResponseRedirect('/gems/adminHome/create-form')
 
 @login_required

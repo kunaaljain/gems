@@ -57,8 +57,8 @@ def addUser(username, department, name, course, gender, password, voted=False):
 
 #---------------------------------
 def makeCandidate(username, details, postname, photo, approved=False):
-	if GlobalVariables.objects.filter(varname='electionState') != 'pre-election':
-		return False
+	# if GlobalVariables.objects.filter(varname='electionState') != 'pre-election':
+	# 	return False
 	if len(Users.objects.filter(username=username)) == 0:
 		 return False
 	else:
