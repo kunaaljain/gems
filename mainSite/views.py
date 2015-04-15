@@ -20,7 +20,7 @@ from django.contrib.auth import get_user
 from django.contrib import messages
 
 from mainSite.forms import CommentForm
-from .databaseManager import registerUsers
+from .databaseManager import registerUsers, getWinner, getStats
 import databaseManager
 from gems.settings import BASE_DIR
 import logging
@@ -575,3 +575,19 @@ def results_page(request):
 	print res
 
 	return render(request, 'election-results.html', {'stats': res, "NoOfVotes": 10})
+
+
+
+#To Display the list of selected candidates after the election 
+def selectedCandidates(request): 
+	'''selectedCandidates displays the list of selected candidates for each post on the url ^selected-list$'''
+	stats = getStats()
+	winnerlist = []
+	# stats = [	('vp',1,2,	[ ('candOne',200,'permaLink'),('candTwo',300,'xxx') ]	) ,
+	# 			('tech',1,2,[ ('candThree',400,'xxx') , ('candFour',500,'xxx')]),
+	# 			('welfare',2,3,[('candFive',500,'xxx') , ('candSix',764,'xxx') , ('candSeven',200,'xxx')])
+	# 		]
+	winnerlist = getWinner(stats)	
+	#winnerlist = [('Vice President', [('candOne', 400, 'permaLink')]), ('Senator', [('candFive', 500, 'xxx'), ('candSix', 764, 'xxx'), ('candSeven', 200, 'xxx')]), ('Technical Secratary', [('CandFour', 500)])]
+	contextObj = Context({'winnerlist' : winnerlist})
+	return render_to_response('selected-candidates.html', contextObj)
