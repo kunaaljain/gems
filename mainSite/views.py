@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 @login_required
 def user_logout(request):
 	logout(request)
-	return HttpResponseRedirect('/gems')
+	return HttpResponseRedirect('/gems/login')
 
 def user_login(request):                      #url for login page is home/login
 
@@ -62,6 +62,20 @@ def voterHome(request):
 	return render(request, 'main_page.html')
 
 @login_required
+def voter_info(request):
+	errorMsg = ''
+	if request.method == 'POST':
+		data = request.POST.dict()
+		if data['password1'] != data['password2']:
+			errorMsg = 'The passwords do not match'
+		elif len(data['password1']) < 8:
+			errorMsg = 'Your new password should be atleast 8 characters long'
+		else:
+			request.user.set_password(data['password1'])
+			errorMsg = 'Password Changed'
+	return render(request, 'voter-info.html', {'voter': Users.objects.get(username=request.user.username), 'errorMsg':errorMsg})
+
+@login_required
 def voterView(request):
 	if len(Users.objects.filter(username=request.user.username)) == 0:
 		return HttpResponse("Sorry, you are not registered as a voter")
@@ -80,14 +94,13 @@ def voterView(request):
 				print candidatesVoted
 				jsonDict[item['postName']] = candidatesVoted
 			jsonStr = json.dumps(jsonDict)
-			#registerVote(jsonStr,voterDetail.name,request.POST.get('alertInput'))
 			contextObj = Context()
 			return render(request, 'votingpage.html', {'takePassword': True, 'votes': jsonStr})
 		else:
 			password = request.POST.dict()['password']
 			voteStr = request.POST.dict()['votes']
 			if not request.user.check_password(password):
-				return render(request, 'votingpage.html', {'takePassword': True, 'votes': voteStr, 'passwordIncorrect': True})
+				return render(request, 'votingpage.html', {'takePassword': True, 'votes': voteStr, 'incorrectPassword': True})
 			voter = Users.objects.filter(username=request.user.username)[0]
 			if voter.voted:
 				return HttpResponse("You have already cast your vote. You may vote only once.")
@@ -95,6 +108,7 @@ def voterView(request):
 			if databaseManager.registerVote(voteStr, request.user.username, password):
 				votes = eval(voteStr)
 				voter.voted = True
+				voter.save()
 				for post in votes:
 					for candidateName in votes[post]:
 						candidate = Candidates.objects.filter(username=candidateName)[0]
@@ -116,8 +130,9 @@ def voterView(request):
 				return HttpResponse('Encountered an error while registering vote. The election has not started yet.')
 	else:
 		voterDetail = Users.objects.filter(username=request.user.username)[0]
+		if voterDetail.voted:
+				return HttpResponse("You have already cast your vote. You may vote only once.")
 		votablePosts = databaseManager.getVotablePosts(voterDetail.gender, voterDetail.course)
-		#contextObj = Context({'votablePosts':votablePosts})
 		postdata= []
 		for postTemp in votablePosts:
 			candidates=Candidates.objects.filter(postname=postTemp['postName'])
@@ -318,7 +333,7 @@ def view_candidate_information(request):
 			return HttpResponse("Only admins are allowed to approve/disapprove candidates. This will be reported!!") #this is why we require login
 		candidate.approved = not candidate.approved
 		candidate.save()
-		return HttpResponseRedirect('/gems/candidates/view-candidate-list')
+		return render(request, 'approve-email-confirmation.html', {'username': candidate.username, 'approved': candidate.approved, 'name': Users.objects.filter(username=candidate.username)[0].name})
 
 	candidate_username = request.GET['user']
 	candidate = Candidates.objects.filter(username=candidate_username)
@@ -363,7 +378,7 @@ def view_candidate_information(request):
 	isAdmin, isApproved = False, None
 	if len(Users.objects.filter(username=request.user.username)) == 0: #ie. admin. So display option to approve/disapprove candidates
 		isAdmin = True
-		isApproved = candidate.approved
+	isApproved = candidate.approved
 
 	if not isApproved and not isAdmin:
 		return HttpResponse("Sorry, no such candidate exists") #deliberately chose the same string so that information is not leaked
@@ -379,7 +394,6 @@ def view_candidate_list(request):
 		try:
 			name = Users.objects.filter(username=candidate.username)[0].name
 		except IndexError:
-			continue #For debugging purposes only
 			assert(False)
 		if not candidate.postname in res:
 			res[candidate.postname] = []
@@ -416,9 +430,26 @@ def discuss(request,o_id):
 			tempComment.save()
 			agenda.comments.add(tempComment)
 	Anonymous = "Anonymous"
-	comments = agenda.comments.all()
+	comments = agenda.comments.all().order_by('-likes')
 	c.update({'agenda':agenda,'comments':comments,'commentForm':commentForm,'Anonymous':Anonymous,'show':show, 'candidateName': candidateName, 'candidatePost': candidatePost, 'candidateUsername': agenda.candidate.username})
 	return render(request,'discuss.html',c)
+
+def discuss_list(request):
+	if not request.method == "GET":
+		raise IOError
+	candidates = Candidates.objects.all()
+	res = {}
+	for agenda in Agenda.objects.all():
+		candidate = Candidates.objects.filter(username=agenda.candidate.username)[0]
+		try:
+			name = agenda.candidate.name
+		except IndexError:
+			assert(False)
+		if not candidate.postname in res:
+			res[candidate.postname] = []
+		res[candidate.postname] += [{'id': agenda.id, 'name': name}]
+	return render(request, 'discuss-list.html', {'posts': res})
+
 
 #ab1a507dd0eee136e381
 

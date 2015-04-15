@@ -1,0 +1,150 @@
+{% extends "blank-page.html" %}
+{% block content %}
+	
+		<!-- Upload form. Note enctype attribute! -->
+		<div class="row">
+			<div class="col-md-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						Upload New Voter Details
+					</div>
+					<div class="panel-body">
+						<form action="/gems/adminHome/register-users" method="post" enctype="multipart/form-data">
+							{% csrf_token %}
+							<p>{{ form.non_field_errors }}</p>
+							<p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+							<p>
+								{{ form.docfile.errors }}
+								{{ form.docfile }}
+							</p>
+							<input type="file" name="docfile"/>
+							<button type="submit" class="btn btn-primary">Upload</button
+						</form>
+					</div>
+				</div>
+			</div>
+			{% if messages %}
+				<div class="col-md-6">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							Error Messages
+						</div>
+							<ul class="messages">
+							    {% for message in messages %}
+							    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+							    {% endfor %}
+							</ul>		
+						</div>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+
+		<div class="row">
+			{% if newuserlist %}
+				<div class="col-md-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							New Voters Detected
+						</div>
+						<table class="table">
+							<thead>
+								<th>Username</th>
+								<th>Name</th>
+								<th>Department</th>
+								<th>Course</th>
+								<th>Gender</th>
+								<th>Hostel</th>
+							</thead>
+							<tbody>
+							    {% for user in newuserlist %}
+							    <tr>
+							    	<td>{{user.username}}</td>
+							    	<td>{{user.department}}</td>
+							    	<td>{{user.name}}</td>
+							    	<td>{{user.course}}</td>
+							    	<td>{{user.gender}}</td>
+							    	<td>{{user.hostel}}</td>
+								</tr>
+							    {% endfor %}
+							</rbody>
+						</table>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+		<div class="row">
+			{% if True %}
+				<div class="col-md-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							List of All Voters
+						</div>
+						<table class="table">
+							<thead>
+								<th>Username</th>
+								<th>Name</th>
+								<th>Department</th>
+								<th>Course</th>
+								<th>Gender</th>
+								<th>Hostel</th>
+							</thead>
+							<tbody>
+							    {% for user in alluserlist %}
+							    <tr>
+							    	<td>{{user.username}}</td>
+							    	<td>{{user.department}}</td>
+							    	<td>{{user.name}}</td>
+							    	<td>{{user.course}}</td>
+							    	<td>{{user.gender}}</td>
+							    	<td>{{user.hostel}}</td>
+								</tr>
+							    {% endfor %}
+							</rbody>
+						</table>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+
+		{% if newuserlist %}
+		<form action="/gems/adminHome/register-users" method="post">
+			{% csrf_token%}
+			<input type="hidden" name="userlist" value="[{% for user in newuserlist %} { 'username': '{{user.username}}', 'department': '{{user.department}}', 'name': '{{user.name}}', 'course': '{{user.course}}', 'gender': '{{user.gender}}', 'hostel': '{{user.hostel}}' }, {% endfor %}]"/>
+			<button type="submit" class="btn btn-primary">Register New Users and Send Email</button>
+		</form>
+		{% endif %}
+
+
+{% endblock %}
+
+
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Username</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">1</th>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td>Jacob</td>
+            <td>Thornton</td>
+            <td>@fat</td>
+          </tr>
+          <tr>
+            <th scope="row">3</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+          </tr>
+        </tbody>
+      

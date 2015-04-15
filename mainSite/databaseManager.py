@@ -70,6 +70,7 @@ def makeCandidate(username, details, postname, photo, approved=False):
 		p1.save()
 
 		a1 = Agenda(candidate=Users.objects.filter(username=username)[0], content='.')
+		a1.save()
 		return True
 
 #---------------------------------

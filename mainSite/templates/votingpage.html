@@ -63,9 +63,11 @@
         <form action="/gems/voterHome/voting-page" method="post">
             {% csrf_token %}
             <input type="hidden" name="votes" value="{{votes}}"/>
+            Re-Enter your password:<br/>
             <input type="password" class="form-control" name="password"/>
             {% if incorrectPassword %}
-                <span class="label label-important">The password you gave is incorrect</span>
+                <br/>
+                <span class="alert alert-danger">The password you gave is incorrect</span>
                 <br/>
             {% endif %}
             <br/>

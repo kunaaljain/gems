@@ -1,0 +1,20 @@
+{% extends "blank-page.html" %}
+{% block content %}
+<p>Username - {{voter.username}}</p>
+<p>Name - {{voter.name}}</p>
+<p>Course - {{voter.course}}</p>
+<p>Gender - {{voter.gender}}</p>
+<p>Hostel - {{voter.hostel}}</p>
+<form action="/gems/voterHome/voter-info" method="post">
+	{% csrf_token %}
+	<b>Change Your Password:</b>
+	<br/>New Password    : <input type="password" class="form-control" name="password1"/>
+	Confirm Password: <input type="password" class="form-control" name="password2"/>
+<button type="submit" class="btn btn-default">Change Password</button>
+</form>
+{% if errorMsg != '' %}
+	<br/>
+    <span class="alert alert-danger">{{errorMsg}}</span>
+    <br/>
+{% endif %}
+{% endblock %}
