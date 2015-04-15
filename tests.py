@@ -1,23 +1,24 @@
 from django.test import TestCase
-from mainSite.models import Posts, Votes
+from mainSite.models import Posts, Votes, GlobalVariables
 from mainSite import views
 from mainSite import databaseManager
 
-class  dbtest(TestCase):
+class  duringelection(TestCase):
 	def __init__(self, *args, **kwargs):
 		super(dbtest, self).__init__(*args, **kwargs)
 		self.passy = []
 
 	def setUp(self):
-		Posts.objects.create(postname="Vice President", info_fields="[{'description': u'Name', 'type': u'text', 'id': 'field0', 'validation': u'', 'placeholder': u'', 'options': u''}, {'description': u'Gender', 'type': u'radio', 'id': 'field1', 'validation': u'', 'placeholder': u'', 'options': u'Male; Female'}, {'description': u'Agenda', 'type': u'file', 'id': 'field2', 'validation': u'.*\.pdf', 'placeholder': u'', 'options': u''}]")
-		userList = [{'username':'kayush', 'department':'cse', 'name':'Ayush', 'course':'btech', 'hostel' : 'Siang'},
-		 {'username':'adgfd', 'department':'cse', 'name':'sdg', 'course':'btech', 'hostel' : 'Kameng'},
-		 {'username':'Student1', 'department':'ece', 'name':'Nice Name', 'course':'mtech', 'hostel' : 'Subuansiri'},
-		 {'username':'Student2', 'department':'des', 'name':'Hiyaa', 'course':'phd', 'hostel' : 'Siang'}
+		Posts.objects.create(postname="Vice President", postCount=1, eligibleGender='a', eligibleCourse='a', info_fields="[{'description': u'Name', 'type': u'text', 'id': 'field0', 'validation': u'', 'placeholder': u'', 'options': u''}, {'description': u'Gender', 'type': u'radio', 'id': 'field1', 'validation': u'', 'placeholder': u'', 'options': u'Male; Female'}, {'description': u'Agenda', 'type': u'file', 'id': 'field2', 'validation': u'.*\.pdf', 'placeholder': u'', 'options': u''}]")
+		userList = [{'username':'kayush', 'department':'cs', 'name':'Ayush', 'course':'btech', 'hostel' : 'siang', 'gender': 'm'},
+		 {'username':'adgfd', 'department':'cs', 'name':'sdg', 'course':'btech', 'hostel' : 'kameng', 'gender': 'm'},
+		 {'username':'Student1', 'department':'ee', 'name':'Nice Name', 'course':'mtech', 'hostel' : 'subuansiri', 'gender': 'f'},
+		 {'username':'Student2', 'department':'dd', 'name':'Hiyaa', 'course':'phd', 'hostel' : 'siang', 'gender': 'm'}
 		]
 		self.passy = databaseManager.registerUsers(userList)
+		GlobalVariables(varname='electionState', value='election').save()
 
-	def test_animals_can_speak(self):
+	def test_post_present(self):
 		"""Animals that can speak are correctly identified"""
 		vp = Posts.objects.get(postname="Vice President")
 		self.assertEqual(vp.postname,"Vice President")

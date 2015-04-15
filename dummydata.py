@@ -27,7 +27,7 @@ from mainSite.models import Posts
 post = Posts(postname="Vice President", postCount=1, eligibleGender='a', eligibleCourse='a', info_fields="[{'description': u'Name', 'type': u'text', 'id': 'field0', 'validation': u'', 'placeholder': u'', 'options': u''}, {'description': u'Gender', 'type': u'radio', 'id': 'field1', 'validation': u'', 'placeholder': u'', 'options': u'Male; Female'}, {'description': u'Agenda', 'type': u'file', 'id': 'field2', 'validation': u'.*\.pdf', 'placeholder': u'', 'options': u''}]")
 post.save()
 
-#print passy
+print passy
 #databaseManager.registerVote("some text pertaining to a vote", "kayush", passy[0])
 #databaseManager.registerVote("some text pertaining to a vote", "kayush", passy[0])
 #databaseManager.registerVote("some text pertaining to a vote", "kayush", passy[0])
