@@ -5,7 +5,7 @@ from django.core.management import call_command
 # call_command('makemigrations', interactive = False)
 # call_command('migrate', interactive = False)
 
-call_command('syncdb', interactive = True)
+call_command('syncdb', interactive = False)
  
 #This part is essential to the functioning of the system:
 from mainSite.models import *
@@ -48,6 +48,9 @@ post2.save()
 
 post3=Posts(postname='Senators (Girls)', info_fields=[{'description': u'Agenda', 'type': u'file', 'id': 'field0', 'validation': u'.*\\.pdf', 'placeholder': u'', 'options': u''}, {'description': u'Gender', 'type': u'radio', 'id': 'field', 'validation': u'Female', 'placeholder': u'', 'options': u'Female; Male'}], eligibleGender='f', eligibleCourse='a', postCount = 1)
 post3.save()
+
+#reg_cand = Candidates(username='kayush',details=json.dumps(record),postname=postname,photo=photo,approved=False)
+#reg_cand.save()
 
 GlobalVariables(varname='electionState', value='election').save()
 databaseManager.registerVote("some text pertaining to a vote", "kayush", passy[0])

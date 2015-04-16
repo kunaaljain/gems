@@ -181,6 +181,13 @@ def registrationform(request):
 		record = copy.deepcopy(request.POST.dict())
 		record.pop('csrfmiddlewaretoken')
 
+		user = Users.objects.get(username=request.user.username)
+		postObj = Posts.objects.filter(postname=postname)[0]
+		if postObj.eligibleGender != 'a' and postObj.eligibleGender != user.gender:
+			return HttpResponse("You are not of the right gender to contest for this post!")
+		if postObj.eligibleCourse != 'a' and postObj.eligibleCourse != user.course:
+			return HttpResponse("Your course is not right for this post! You must be a '"+postObj.eligibleGender+"'.")
+
 		files = request.FILES.dict()
 		assert(len(Posts.objects.filter(postname=postname)) == 1)
 		post = eval(Posts.objects.filter(postname=postname)[0].info_fields)
@@ -207,7 +214,9 @@ def registrationform(request):
 			newDoc.save()
 			record[doc] = str(newDoc.id)
 
-		assert(photo != None)
+		if photo == None:
+			return HttpResponse('Please upload a valid photo of yourself.')
+
 		photo_name = files['photo']._name
 		if len(photo_name.split('.')) == 0 or photo_name.split('.')[-1] not in ['jpg', 'jpeg', 'png', 'bmp']:
 			postname = request.GET.get('postname')
