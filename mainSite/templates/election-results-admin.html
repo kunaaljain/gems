@@ -1,4 +1,4 @@
-{% extends "voterblank.html" %}
+{% extends "blank-page.html" %}
 {% block content %}
         <div id="page-wrapper">
 
@@ -27,12 +27,11 @@
                 <!-- /.row -->
 
 
-                <div class="row">
+
                 {% for items in stats %}
 
                 <!-- /.row -->
-
-                    <div class="col-lg-3">
+                    <div class="col-lg-4">
                         <div class="panel panel-green">
                             <div class="panel-heading">
                                 <h3 class="panel-title"><i class="fa fa-long-arrow-right"></i> {{items.0}}</h3>
@@ -46,10 +45,9 @@
                                 </div>
                             </div>
                         </div>
-                    </div>     
+                    </div>
 
                 {% endfor %}
-                </div>
 
                 <!-- /.row -->
 

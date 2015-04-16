@@ -74,7 +74,6 @@ def votestoexcel(text, certi, publickey, verified, result):
 		worksheet.write(row, col, boolname)
 		row += 1
 
-
 	# Number of Users for script
 		if (result == 1):
 			boolname = 'True'

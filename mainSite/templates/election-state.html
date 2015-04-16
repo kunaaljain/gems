@@ -1,0 +1,20 @@
+{% extends "blank-page.html" %}
+{% block content %}
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<a href="adminHome">Control Election State</a>
+			</div>
+			<div class="panel-body">
+				<form action="/gems/adminHome" method="post">
+					{% csrf_token %}
+					 <input type="radio" class="form-control" name="electionState" value="pre-election" {% if electionState == 'pre-election' %} checked {% endif %}>Pre Election
+					 <input type="radio" class="form-control" name="electionState" value="election" {% if electionState == 'election' %} checked {% endif %}>During Election
+					 <input type="radio" class="form-control" name="electionState" value="post-election" {% if electionState == 'post-election' %} checked {% endif %}>Post Election
+					 <br/><br/>
+					<button type="submit" class="btn btn-default">Change State</button>
+				</form>
+			</div>
+		</div>
+	</div>
+{% endblock %}
