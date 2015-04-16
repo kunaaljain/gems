@@ -121,14 +121,26 @@ def getVotablePosts(voterGender,voterCourse):
 	return postsDictList
 
 #--------------------
-def verifyVote(votes):
+def verifyVote():
 	"""Verifies all votes"""
+	votes = Votes.objects.all()
+	text = []
+	certi = []
+	publickey = []
+	verified = []
+	result = True
 	for vote in votes:
 		value = cryptography.asymmetricVerify(vote.plainText, vote.certificate, vote.publicKey.publicKey)
+		text += [vote.plainText]
+		certi += [vote.certificate]
+		publickey += [vote.publicKey.publicKey]
+		verified += [result]
 		if value == False:
 			print error
-			return value
-	return value
+			result = False
+
+	excelfunc.votestoexcel(text,certi,publickey,verified,result)
+	return result
 
 #---------------------
 def getStats():

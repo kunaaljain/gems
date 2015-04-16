@@ -9,7 +9,7 @@ from django.core.management import call_command
  
 #This part is essential to the functioning of the system:
 from mainSite.models import *
-GlobalVariables(varname='electionState', value='pre-election').save()
+# GlobalVariables(varname='electionState', value='pre-election').save()
 
  #This is optional
 
@@ -28,10 +28,12 @@ post = Posts(postname="Vice President", postCount=1, eligibleGender='a', eligibl
 post.save()
 
 print passy
-#databaseManager.registerVote("some text pertaining to a vote", "kayush", passy[0])
-#databaseManager.registerVote("some text pertaining to a vote", "kayush", passy[0])
-#databaseManager.registerVote("some text pertaining to a vote", "kayush", passy[0])
 
+GlobalVariables(varname='electionState', value='election').save()
+databaseManager.registerVote("some text pertaining to a vote", "kayush", passy[0])
+databaseManager.registerVote("some text pertaining to a vote1", "kayush", passy[0])
+databaseManager.registerVote("some text pertaining to a vote2", "kayush", passy[0])
+databaseManager.verifyVote()
 #sampe post info_fields
 #[{'description': u'Name', 'type': u'text', 'id': 'field0', 'validation': u'', 'placeholder': u'Your Name', 'options': u''}, {'description': u'Date of Birth', 'type': u'text', 'id': 'field1', 'validation': u'[0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9]', 'placeholder': u'DOB - dd-mm-yyyy', 'options': u''}, {'description': u'Agenda', 'type': u'file', 'id': 'field2', 'validation': u'.*.pdf', 'placeholder': u'', 'options': u''}]
 
