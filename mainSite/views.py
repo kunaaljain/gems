@@ -3,7 +3,7 @@ import re
 import json
 import copy
 import os
-#import xlrd
+import xlrd
 
 
 from django import forms
@@ -59,7 +59,7 @@ def user_login(request):                      #url for login page is home/login
 @login_required
 def voterHome(request):
 	logger.info('voter home page requested')
-	return render(request, 'main_page.html')
+	return render(request, 'voterhome.html',{'dashAct': True})
 
 @login_required
 def voter_info(request):
@@ -155,7 +155,8 @@ def register(request):
 	if request.method == "GET":
 		post_i = Posts.objects.all()
 		post_data = {
-			"post_detail" : post_i
+			"post_detail" : post_i,
+			"startAct" : True
 		}
 		return render_to_response('registration_form.html', post_data, context_instance=RequestContext(request))
 	elif request.method == "POST":
@@ -171,7 +172,7 @@ def registrationform(request):
 		x=Posts.objects.get(postname=postname).info_fields
 		formFormat = eval(x)
 		#FEATURE REQUIREMENT - data is not persistent - venkat
-		return render(request, 'form.html', {"formFormat": formFormat ,  "postname":postname })
+		return render(request, 'form.html', {"formFormat": formFormat ,  "postname":postname ,"startAct" :True})
 	
 	elif(request.method=='POST') :
 		#BUG REPORT - If a candidate submits a form twice, two separate entries are created
@@ -230,7 +231,7 @@ def adminHome(request):
 			assert(x.value in ['pre-election', 'election', 'post-election'])
 
 	electionState = GlobalVariables.objects.filter(varname='electionState')[0].value
-	return render(request, 'adminHome.html', {'electionState': electionState})
+	return render(request, 'adminHome.html', {'electionState': electionState,  "dashAct" : True})
 
 
 @login_required
@@ -239,7 +240,8 @@ def create_form(request):
 		return HttpResponse('Only administrators are allwoed to access this page!')
 	post_i = Posts.objects.all()
 	post_data = {
-		"post_detail" : post_i
+		"post_detail" : post_i,
+		"formsAct" : True
 	}
 	return render_to_response('create-form.html', post_data, context_instance=RequestContext(request))
 
@@ -383,7 +385,7 @@ def view_candidate_information(request):
 	if not isApproved and not isAdmin:
 		return HttpResponse("Sorry, no such candidate exists") #deliberately chose the same string so that information is not leaked
 
-	return render(request, 'view-candidate-information.html', {'details': detailsList1, 'photo': candidate_photo, 'username': candidate_username, 'candidateName': candidate_name, 'isAdmin': isAdmin, 'isApproved': isApproved})
+	return render(request, 'view-candidate-information.html', {'details': detailsList1, 'photo': candidate_photo, 'username': candidate_username, 'candidateName': candidate_name, 'isAdmin': isAdmin, 'isApproved': isApproved, 'startAct':True})
 
 def view_candidate_list(request):
 	if not request.method == "GET":
@@ -398,7 +400,7 @@ def view_candidate_list(request):
 		if not candidate.postname in res:
 			res[candidate.postname] = []
 		res[candidate.postname] += [{'username': candidate.username, 'name': name}]
-	return render(request, 'view-candidate-list.html', {'posts': res})
+	return render(request, 'view-candidate-list.html', {'posts': res, "ipAct" :True})
 
 def discuss(request,o_id):
 	'''Discuss Function renders a discussion page for doubts/agendas.It takes input as the request, object id of the agenda
@@ -501,6 +503,10 @@ def __excelFilecheck__(path):
     return 0
 
 @login_required
+def change_electionstate(request):
+	return render(request, 'election-state.html',{'startAct' : True})
+
+@login_required
 def register_users(request):
 	if len(Users.objects.filter(username=request.user.username)) != 0:
 		return HttpResponse("Only administrators are allowed to access this page!")
@@ -574,8 +580,9 @@ def register_users(request):
 				allUsers.append(user)
 
 			# Redirect to the document list after POST
-			return render(request, 'register-users.html', {'newuserlist': userlist, 'alluserlist': allUsers}, context_instance=RequestContext(request))
-	
+			return render(request, 'register-users.html', {'newuserlist': userlist, 'alluserlist': allUsers, 'monitorAct':True}, context_instance=RequestContext(request))
+	else:
+		form = ExcelDocumentForm() # A empty, unbound form
 	
 	allUsers = copy.deepcopy(userlist)
 	for newUser in Users.objects.all():
@@ -588,7 +595,7 @@ def register_users(request):
 		user['hostel']=newUser.hostel
 		allUsers.append(user)
 	# Render list page with the documents and the form
-	return render(request, 'register-users.html', {'alluserlist': allUsers})
+	return render(request, 'register-users.html', {'monitorAct':True, 'alluserlist': allUsers})
 
 @login_required
 def results_page(request):
@@ -606,8 +613,10 @@ def results_page(request):
 		post = Posts.objects.filter(postname=postname)[0]
 		res += [(postname, len(tally[postname]), post.postCount, tally[postname], '#')]
 	#print res
-
-	return render(request, 'election-results.html', {'stats': res, "NoOfVotes": 10})
+	if len(Candidates.objects.filter(username=request.user.username)) == 0:
+		return render(request, 'election-results-admin.html', {'stats': res, "NoOfVotes": 10})
+	else:
+		return render(request, 'election-results.html', {'stats': res, "NoOfVotes": 10})
 
 def candidateStat(request,candidateName):
 	if len(Candidates.objects.filter(username=request.user.username)) != 0 and GlobalVariables.objects.get('electionState') != 'post-election':

@@ -1,4 +1,4 @@
-{% extends "blank-page.html" %}
+{% extends "voterblank.html" %}
 {% block content %}
 
 <script>
@@ -6,6 +6,10 @@
         alert("{{alert}}");
     {% endif %}
 </script>
+        <h1 class="page-header">
+            Please provide the required information:
+            <small>{{ username }}</small>
+        </h1>
 
 <form action="" method="post" enctype="multipart/form-data" >
                     {%csrf_token%}
