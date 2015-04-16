@@ -1,5 +1,5 @@
 
-{% extends "voterblank.html" %}
+{% extends "blank-page.html" %}
 {% load staticfiles %}
 {% block content %}
 
@@ -18,62 +18,48 @@
   </ul>
 </div>
 
-{% if not takePassword %}
-    <form action="/gems/voterHome/voting-page" method="post">
-    {% csrf_token %}
-      <div class="tab-content">
+<form action="/mainsite/confirm" method="post">
 
-          {% for post in data %}
+  <div class="tab-content">
 
-           {% if forloop.first %}
-           
-                <div class="tab-pane active" id="tab{{ forloop.revcounter }}">
-                 <p><h4> Vote for {{ post.post }} </h4></p>
-                <div data-toggle="checkboxes" data-max={{ post.postcount }}>
-                <ul>
-             
-                {% for cand in post.candidates %}
-                    <label onclick="return check()"><input type="checkbox" name="{{ post.post }}.{{ cand }}" id="{{ forloop.revcounter }}"> {{ cand }}</label><br>
-               
-                {% endfor %}
+      {% for post in data %}
 
-                    <label onclick="return check()"><input type="checkbox" name="nota" id="0">NOTA</label>
-                </ul>
-                </div>
-                </div>
-            {% else %}
-                <div class="tab-pane" id="tab{{ forloop.revcounter }}">
-                <p>Vote for {{ post.post }}</p>
-                <ul>
-                {% for cand in post.candidates %}
-                    <label onclick="return check()"><input type="checkbox" name="{{ post.post }}.{{ cand }}" id="{{ forloop.revcounter }}"> {{ cand }}</label><br>
+       {% if forloop.first %}
+            <div class="tab-pane active" id="tab{{ forloop.revcounter }}">
+            <p>Vote for {{ post.post }}</p>
 
-                {% endfor %}
-                <label onclick="return check()"><input type="checkbox" name="nota" id="0">NOTA</label>
-                </ul>
-                </div>
-            {% endif %}
+            <div data-toggle="checkboxes" data-max={{ post.postcount }}>
+            <ul>
+            {% for cand in post.candidates %}
+                <label onclick="return check()"><input type="checkbox" name="{{ post.post }}.{{ cand }}" id="{{ forloop.revcounter }}"> {{ cand }}</label><br>
+
             {% endfor %}
-            <button type="submit" id="submit" class="btn btn-default" disabled>Submit</button>
-           <a href="#" id="prv" class="btn btn-primary">&lt;&lt;Previous</a>
-          <a href="#" id="nxt" class="btn btn-primary">Next>></a>
+                <label onclick="return check2()"><input type="checkbox" name="nota" id="0">NOTA</label>
+            </ul>
+            </div>
+            </div>
+        {% else %}
+            <div class="tab-pane" id="tab{{ forloop.revcounter }}">
+            <p>Vote for {{ post.post }}</p>
+            <div data-toggle="checkboxes" data-max={{ post.postcount }}>
+            <ul>
+            {% for cand in post.candidates %}
+                <label onclick="return check()"><input type="checkbox" name="{{ post.post }}.{{ cand }}" id="{{ forloop.revcounter }}"> {{ cand }}</label><br>
+
+            {% endfor %}
+            <label onclick="return check2()"><input type="checkbox" name="nota" id="0">NOTA</label>
+            </ul>
+            </div>
+            </div>
+        {% endif %}
+        {% endfor %}
+        <button type="submit" id="submit" class="btn btn-default" disabled>Submit</button>
+       <a href="#" id="prv" class="btn btn-primary">&lt;&lt;Previous</a>
+      <a href="#" id="nxt" class="btn btn-primary">Next>></a>
 
 
-      </div>
-    </form>
-{% else %}
-        <form action="/gems/voterHome/voting-page" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="votes" value="{{votes}}"/>
-            <input type="password" class="form-control" name="password"/>
-            {% if incorrectPassword %}
-                <span class="label label-important">The password you gave is incorrect</span>
-                <br/>
-            {% endif %}
-            <br/>
-            <button type="submit" class="btn btn-default">Submit</button>
-        </form>
-{% endif %}
+  </div>
+</form>
 
 <script type="text/javascript" src="{% static "js/jquery.js" %}"></script>
     <script type="text/javascript" src="{% static "js/jquery.min.js" %}"></script>
@@ -81,7 +67,7 @@
 <script type="text/javascript">
 
 
-
+//navigate among tabs
 $('#nxt').click(function () {
     $('.nav-tabs > .active').next('li').find('a').trigger('click');
 });
@@ -90,7 +76,7 @@ $('#prv').click(function () {
 });
 
 
-
+//returns as object the element with id as childID in a particular container
 function GetElementInsideContainer(containerID, childID) {
     var elm = {};
     var elms = document.getElementById(containerID).getElementsByTagName("*");
@@ -103,6 +89,31 @@ function GetElementInsideContainer(containerID, childID) {
     return elm;
 }
 
+//disables the checkboxes if user selects NOTA option
+function check2()
+{
+    if (document.getElementById('0').checked == 1)
+    {
+        i=1;
+        while(!!document.getElementById(i))
+        {
+            document.getElementById(i).checked = false;
+            document.getElementById(i).disabled = true;
+            i++;
+        }
+    }
+    else
+    {
+        i=1;
+        while(!!document.getElementById(i))
+        {
+            document.getElementById(i).disabled = false;
+            i++;
+        }
+    }
+    check();
+}
+//disables or enables submit button if the user has voted for each post
 function check()
 {
     var i = 1, j=0;
@@ -123,21 +134,16 @@ function check()
             while(1)
             {
                 e=GetElementInsideContainer(str1.concat(i), j.toString());
-
-
                 if(e.checked)
                 {
-
                     success[i] = 1;
                 }
-
                 if(!e.id)
                 {
                     break;
                 }
                 j++;
             }
-
         }
         i++;
 
@@ -164,60 +170,6 @@ function check()
     }
 }
 
-/*
-function nav(nxtorprv)
-{
-    var currenttab=""
-    var currentdiv=""
-    $('.nav-tabs li').each(function ()
-    {
-        if ($(this).hasClass('active'))
-        {
-            currenttab = $(this);
-
-
-        }
-    });
-    $('.tab-content div').each(function ()
-            {
-                if($(this).hasClass('tab-pane active'))
-                {
-                    currentdiv = $(this);
-                }
-            }
-
-    );
-    if (nxtorprv == "nxt")
-    {
-
-        if (currenttab.next().length)
-        {
-            currenttab.removeClass('active');
-            currenttab.next().addClass('active');
-            currentdiv.removeClass('tab-pane active');
-            currentdiv.addClass('tab-pane');
-            currentdiv.next().addClass('')
-        }
-        else
-        {} // do nothing for now
-
-    }
-    else
-    {
-
-        if (currenttab.prev().length)
-        {
-
-            currenttab.removeClass('active');
-            currenttab.prev().addClass('active');
-        }
-        else
-        {} //do nothing for now
-
-    }
-
-}
-*/
 </script>
 
 {% endblock %}
