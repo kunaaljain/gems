@@ -1,4 +1,4 @@
-{% extends "blank-page.html" %}
+{% extends "voterblank.html" %}
 {% block content %}
 
                         <h1 class="page-header">
@@ -7,15 +7,34 @@
                         </h1>
 
             {% for post, candidates in posts.items %}
+                <div class="col-lg-6">
+                <h3>{{post}}</h3>
+                <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Course</th>
+                    <th>Gender</th>
+                    <th>Hostel</th>
+                </thead>
                 <ul>
-                    <li>
-                        <h3>{{post}}</h3>
-                        <ul>
-                            {% for candidate in candidates %}
-                                    <li><a href="view-candidate-information?user={{candidate.username}}">{{candidate.name}}</a></li>
-                            {% endfor %}
-                        </ul>
-                    </li>
+                    {% for candidate in candidates %}
+                            <tr>
+                                <td><a href="view-candidate-information?user={{candidate.username}}">{{candidate.name}}</a></td>
+                                <td>{{candidate.username}}@iitg.ernet.in</td>
+                                <td>{{candidate.course}}</td>
+                                <td>{{candidate.gender}}</td>
+                                <td>{{candidate.hostel}}</td>
+                            </tr>
+                    {% endfor %}
                 </ul>
+                </table>
+                </div>
+                </div>
             {% endfor %}
 {% endblock %}
+
+
+
+ 
