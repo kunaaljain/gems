@@ -93,6 +93,7 @@
               <!--The list of courses-->
               <div class="row">
                 <div class="col-lg-12">
+                  <h3>Some Basic Info</h3>
                   <form action="add-fields" method="post">
                   {%csrf_token%}
                     <input type="hidden" value="{{postname}}" name="postname">
@@ -147,6 +148,10 @@
                           </label>
                       </div>
                     </div>
+                    <div class="form-group">
+                      <label>Number of Vacancies: <input type="text" name="postCount" description="The number of candidates who will be elected"/></label>
+                    </div>
+                    <h3>Customizable Fields</h3>
                     <div id="formFields">
              
                     </div>

@@ -88,7 +88,7 @@
      
                                 			radios = '<div class="radio">\
                                    			          <label>\
-                                        		      <input type="radio" name="{{x.id}}" id="optionsRadios1" value="'+res[i]+'" checked>'+res[i]+'\
+                                        		      <input type="radio" name="{{x.id}}" id="optionsRadios1" value="'+res[i]+'" {% if x.validation != '' %}pattern="{{x.validation}}"{% endif %}>'+res[i]+'\
                                     			      </label>\
                                 				      </div>' 
                                             var newDiv = document.createElement("div") 
