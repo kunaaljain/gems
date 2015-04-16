@@ -295,6 +295,7 @@ def add_fields(request):
 		post.info_fields=res
 		post.eligibleGender=formFields['eligibleGender']
 		post.eligibleCourse=formFields["eligibleCourse"]
+		post.postCount = 1
 		post.save()
 	if flag==0:
 		return HttpResponseRedirect('/gems/adminHome/create-form')
