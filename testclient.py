@@ -7,6 +7,7 @@ from django.contrib.auth.models import UserManager,User
 class ClientTest(TestCase):
 	def setUp(self):
 		# Every test needs a client.
+		# f62a6eec3d340b45f857
 		self.client = Client()
 		userList = [{'username':'kayush', 'department':'cs', 'name':'Ayush', 'course':'btech', 'hostel' : 'siang', 'gender': 'm'},
 		 {'username':'adgfd', 'department':'cs', 'name':'sdg', 'course':'btech', 'hostel' : 'kameng', 'gender': 'm'},

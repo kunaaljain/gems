@@ -24,6 +24,7 @@ from .databaseManager import registerUsers
 from .databaseManager import *
 from gems.settings import BASE_DIR
 import logging
+import databaseManager
 
 logger = logging.getLogger(__name__)
 

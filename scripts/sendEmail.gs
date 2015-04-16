@@ -3,9 +3,9 @@
 A simple dynamic script to send emails from google spreadsheet
 FORMAT:
 X A                       B
-1 Number of Users	      5
+1 Number of Users	  5
 2 	
-3 Username	              Password
+3 Username	          Password
 4 kunaalus@gmail.com	  kunaal
 5 j.kunal@iitg.ernet.in	  jain
 
