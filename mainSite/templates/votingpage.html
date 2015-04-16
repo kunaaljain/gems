@@ -1,5 +1,5 @@
 
-{% extends "blank-page.html" %}
+{% extends "voterblank.html" %}
 {% load staticfiles %}
 {% block content %}
 
@@ -26,15 +26,17 @@
           {% for post in data %}
 
            {% if forloop.first %}
+           
                 <div class="tab-pane active" id="tab{{ forloop.revcounter }}">
-                <p>Vote for {{ post.post }}</p>
-
+                 <p><h4> Vote for {{ post.post }} </h4></p>
                 <div data-toggle="checkboxes" data-max={{ post.postcount }}>
                 <ul>
+             
                 {% for cand in post.candidates %}
                     <label onclick="return check()"><input type="checkbox" name="{{ post.post }}.{{ cand }}" id="{{ forloop.revcounter }}"> {{ cand }}</label><br>
-
+               
                 {% endfor %}
+
                     <label onclick="return check()"><input type="checkbox" name="nota" id="0">NOTA</label>
                 </ul>
                 </div>
@@ -63,11 +65,9 @@
         <form action="/gems/voterHome/voting-page" method="post">
             {% csrf_token %}
             <input type="hidden" name="votes" value="{{votes}}"/>
-            Re-Enter your password:<br/>
             <input type="password" class="form-control" name="password"/>
             {% if incorrectPassword %}
-                <br/>
-                <span class="alert alert-danger">The password you gave is incorrect</span>
+                <span class="label label-important">The password you gave is incorrect</span>
                 <br/>
             {% endif %}
             <br/>

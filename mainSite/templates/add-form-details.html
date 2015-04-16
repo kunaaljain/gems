@@ -37,42 +37,7 @@
 
       
         <style>
-        #graph1{
-          border:solid 2px;
-          border-color: black;
-          margin-top: 0 px;
-          width: 450px;
-          float: left;
-
-          margin-left: 0px;
-          display: block;
-          height: 350px;
-        }
-        #maingraph{
-          border:solid 2px;
-          border-color: black;
-          margin-top: 0 px;
-          width: 980px;
-          float: left;
-
-          margin-left: 0px;
-          display: block;
-          height: 350px;
-        }
-        .btn.btn-warning{
-          position: center;
-          margin-left: 440px;
-        }
-        .text.ans{
-          width:1000px;
-        }
-        #page-wrapper{
-          text-align: left;
-        }
-        #wrapper{
-          padding-left: 100px;
-        }
-
+       
         </style>
 
       </head>
@@ -96,7 +61,7 @@
                   <h3>Some Basic Info</h3>
                   <form action="add-fields" method="post">
                   {%csrf_token%}
-                    <input type="hidden" value="{{postname}}" name="postname">
+                    <input type="hidden" value="{{course}}" name="course">
                     <div class="form-group">
                       Gender of Eligible Voters: 
                       <div class="radio">

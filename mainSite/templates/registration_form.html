@@ -1,17 +1,26 @@
-{% extends "blank-page.html" %}
+{% extends "voterblank.html" %}
 {% block content %}
+
+ <h1 class="page-header">
+                            Cast your nomination here:
+                            <small>{{ username }}</small>
+                        </h1>
 
 <form action="/gems/register/" method="post">
 {%csrf_token%}
 	<div class="form-group">
-		<label>Post Contesting For:</label>
+		<h4>Post Contesting For:</h4>
+
+			
 {% for post in post_detail %}
 		<div class="radio">
 		    <label>
-		        <input type="radio" name="optionsRadios" value="{{post.postname}}">{{post.postname}}
+		        <input type="radio" name="optionsRadios" value="{{post.postname}}" checked>{{post.postname}}
 		    </label>
 		</div>
 {% endfor %}
+
+	
 	</div>
 <button type="submit" class="btn btn-default">Submit</button>
 </form>

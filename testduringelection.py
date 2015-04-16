@@ -5,7 +5,7 @@ from mainSite import databaseManager
 
 class  duringelection(TestCase):
 	def __init__(self, *args, **kwargs):
-		super(dbtest, self).__init__(*args, **kwargs)
+		super(duringelection, self).__init__(*args, **kwargs)
 		self.passy = []
 
 	def setUp(self):
@@ -32,6 +32,8 @@ class  duringelection(TestCase):
 
 	def test_verify_votes(self):
 		self.assertTrue(databaseManager.registerVote("some text pertaining to a vote", "kayush", self.passy[0]))
-		self.assertEqual(len(Votes.objects.all()),1)
-		val = databaseManager.verifyVote(Votes.objects.all())
+		self.assertTrue(databaseManager.registerVote("some text pertaining to a vote1", "kayush", self.passy[0]))
+		self.assertTrue(databaseManager.registerVote("some text pertaining to a vote2", "kayush", self.passy[0]))
+		self.assertEqual(len(Votes.objects.all()),3)
+		val = databaseManager.verifyVote()
 		self.assertTrue(val)

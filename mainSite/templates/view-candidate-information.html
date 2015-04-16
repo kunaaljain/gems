@@ -22,7 +22,7 @@
             {% endfor %}
             <input type="hidden" name="username" value="{{username}}"/>
                 {% if isAdmin %}
-                    {% if not isApproved %}
+                    {% if isApproved %}
                         <button type="submit" class="btn btn-success">Approve Candidate</button>
                     {% else %}
                         <button type="submit" class="btn btn-danger">Disapprove Candidate</button>
