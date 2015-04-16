@@ -35,27 +35,27 @@ def user_logout(request):
 
 def user_login(request):                      #url for login page is home/login
 
-    if request.method == 'POST':
-    	logger.debug('New login request')
-    	username= request.POST.get('username')
-    	password = request.POST.get('password')
-    	user = authenticate(username=username,password=password)
-    	if user:
-    	    if (user.is_active and user.is_staff):
-    	        login(request, user)
-    	        if len(Users.objects.filter(username=username)) == 0:
-    	        	return HttpResponseRedirect('/gems/adminHome')
-    	        else:
-    	        	return HttpResponseRedirect('/gems/voterHome')
-    	    else:
-                login(request, user)
-                return HttpResponseRedirect('/gems/voterHome')
-    	else:
-    	    return HttpResponse("your account is diabled")		
-    else:
-        # No context variables to pass to the template system, hence the
-        # blank dictionary object...
-        return render(request, 'login.html', {})
+	if request.method == 'POST':
+		logger.debug('New login request')
+		username= request.POST.get('username')
+		password = request.POST.get('password')
+		user = authenticate(username=username,password=password)
+		if user:
+			if (user.is_active and user.is_staff):
+				login(request, user)
+				if len(Users.objects.filter(username=username)) == 0:
+					return HttpResponseRedirect('/gems/adminHome')
+				else:
+					return HttpResponseRedirect('/gems/voterHome')
+			else:
+				login(request, user)
+				return HttpResponseRedirect('/gems/voterHome')
+		else:
+			return HttpResponse("your account is diabled")
+	else:
+		# No context variables to pass to the template system, hence the
+		# blank dictionary object...
+		return render(request, 'login.html', {})
 
 @login_required
 def voterHome(request):
@@ -489,29 +489,32 @@ def addLikes(request,c_id):
 	return render(request,'test.html')
 
 class ExcelDocumentForm(forms.Form):
-    docfile = forms.FileField(
-        label='Select a file'
-    )
+	docfile = forms.FileField(
+		label='Select a file'
+	)
 
 def __excelFilecheck__(path):
-    workbook = xlrd.open_workbook(path)   
-    worksheet = workbook.sheet_by_name('Sheet1')
-    num_rows = worksheet.nrows - 1
-    num_cells = worksheet.ncols - 1
-    curr_row = 0
+	workbook = xlrd.open_workbook(path)   
+	worksheet = workbook.sheet_by_name('Sheet1')
+	num_rows = worksheet.nrows - 1
+	num_cells = worksheet.ncols - 1
+	curr_row = 0
 
-    while curr_row < num_rows:
-        curr_row += 1
-        row = worksheet.row(curr_row)
-        i=1
-        for i in xrange(1,4):
-            s=worksheet.cell_value(curr_row, i).encode('ascii')
-        if any(i.isdigit() for i in s)=="True":
-            return 1
-        else:
-            pass
+	while curr_row < num_rows:
+		curr_row += 1
+		row = worksheet.row(curr_row)
+		i=1
+		for i in xrange(1,4):
+			s=worksheet.cell_value(curr_row, i).encode('ascii')
+		if any(i.isdigit() for i in s)=="True":
+			return 1
+		else:
+			pass
 
-    return 0
+	#remove file
+	try:
+		os.remove(path)
+	return 0
 
 @login_required
 def change_electionstate(request):
