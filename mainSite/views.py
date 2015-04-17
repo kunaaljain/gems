@@ -631,8 +631,12 @@ def results_page(request):
 		if not candidate.postname in tally:
 			tally[candidate.postname] = []
 		candidateName = Users.objects.filter(username=candidate.username)[0].name
+		''' For debugging
+		print candidate.postname
+		print candidate.voteInfo
+		print candidateName
+		'''
 		tally[candidate.postname] += [(candidateName, eval(candidate.voteInfo)['totVotes'])]
-
 	res = []
 	for postname in tally:
 		post = Posts.objects.filter(postname=postname)[0]

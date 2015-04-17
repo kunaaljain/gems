@@ -68,7 +68,7 @@ def makeCandidate(username, details, postname, photo, approved=False):
 		#assert(approved == False)
 		assert(len(details) != 0)
 		voteInfo = "{'totVotes':0, 'courseWise': {'btech': 0, 'mtech': 0, 'phd': 0, 'other': 0, 'prof': 0}, 'genderWise': {'m': 0, 'f':0}, 'departmentWise': {'cs':0, 'ee':0, 'bt':0, 'cl':0, 'ce':0, 'me':0, 'dd':0, 'ma':0, 'ph':0}, 'hostelWise': {'kameng':0, 'barak':0, 'umiam':0, 'manas':0, 'dihing':0, 'bramhaputra':0, 'lohith':0, 'kapili':0, 'siang':0, 'dibang':0, 'dhansiri':0, 'subhansiri':0, 'married-scholars':0}}"
-		p1 = Candidates(username=username, details=details, postname=postname, photo=photo, approved=approved, voteInfo='[]')
+		p1 = Candidates(username=username, details=details, postname=postname, photo=photo, approved=approved, voteInfo=voteInfo)
 		p1.save()
 
 		a1 = Agenda(candidate=Users.objects.filter(username=username)[0], content='.')
