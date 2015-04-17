@@ -26,6 +26,7 @@ from gems.settings import BASE_DIR
 import logging
 import databaseManager
 import allowed_ips
+import excelfunc
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +53,7 @@ def user_login(request):                      #url for login page is home/login
 				login(request, user)
 				return HttpResponseRedirect('/gems/voterHome')
 		else:
-			return HttpResponse("your account is diabled")
+			return HttpResponse("Username or password is incorrect.")
 	else:
 		# No context variables to pass to the template system, hence the
 		# blank dictionary object...
@@ -544,8 +545,16 @@ def register_users(request):
 	# Handle file upload
 	if request.method == 'POST':
 		if 'userlist' in  request.POST.dict(): #we register the new users
-			#print registerUsers(eval(request.POST.dict()['userlist'])), "26463"
-			return HttpResponseRedirect('/gems/adminHome/register-users')
+			userlist = eval(request.POST.dict()['userlist'])
+			subUserList = []
+			for user in userlist:
+				if len(Users.objects.filter(username=user['username'])) != 0:
+					messages.error(request, 'User: '+user['username']+' is already added. Not adding that user')
+					continue
+				subUserList += [user]
+			passwords = registerUsers(userlist)
+			excelfunc.passwordtoexcel(passwords, usernames)
+			return render(request, 'register-users.html', {'newuserlist': userlist, 'monitorAct':True}, context_instance=RequestContext(request))
 
 		form = ExcelDocumentForm(request.POST, request.FILES)
 		if form.is_valid():
@@ -559,6 +568,7 @@ def register_users(request):
 				val = __excelFilecheck__(path)
 				if val==1:
 					message.error(request,'File contains alphanumeric strings,correct it and Upload again')
+					return HttpResponse("File contains alphanumeric strings,correct it and Upload again")
 				else:
 					workbook = xlrd.open_workbook(path)   
 					worksheet = workbook.sheet_by_name('Sheet1')
@@ -599,7 +609,6 @@ def register_users(request):
 						os.remove(path)
 					except:
 						print "Unable to remove excel file"
-					return 0
 			else:
 				messages.error(request, 'Incorrect extension. Please upload an MS Excel file.')
 

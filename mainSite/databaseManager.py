@@ -2,6 +2,8 @@ import os
 import sys
 import json
 import logging
+from collections import deque
+import time
 from Crypto.PublicKey import RSA
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -74,6 +76,23 @@ def makeCandidate(username, details, postname, photo, approved=False):
 		a1 = Agenda(candidate=Users.objects.filter(username=username)[0], content='.')
 		a1.save()
 		return True
+
+counter = 0
+queue = deque(["1","2","3","4","5"])
+def panicFunction():
+	global counter
+	start=time.time()
+	queue.append(start)
+	queue.popleft()
+	counter += 1;
+	if counter<=5 : 
+		return
+	elif queue[4]-queue[0] <= 5 :
+		state = GlobalVariables.objects.get(varname='electionState')
+		state.value='pre-election'
+		state.save()
+	else :
+		return
 
 #---------------------------------
 def registerVote(plainText, username, password):

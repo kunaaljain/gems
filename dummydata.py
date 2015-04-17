@@ -2,8 +2,10 @@ import os
 from mainSite import databaseManager
 from django.core.management import call_command
 
-call_command('makemigrations', interactive = False)
-call_command('migrate', interactive = False)
+#call_command('makemigrations', interactive = False)
+#call_command('migrate', interactive = False)
+
+call_command('syncdb', interactive = True)
  
 #This part is essential to the functioning of the system:
 from mainSite.models import *
