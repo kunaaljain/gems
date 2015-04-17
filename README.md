@@ -1,23 +1,32 @@
-# gems
+# Gems
 Gymkhana Election Management System
 
-#requirements
+# Requirements
 Python 2.7 with Django framework
 Python libraries: xlrd, xlsxwriter and crypto
 
-The following command should install everything in Ubuntu
-sudo apt-get install python2.7 python-django python-xlrd python-xlsxwriter python-crypto
-or use pip to install the libraries
+## Installation
 
-## How to contribute
+The following command should install everything in Ubuntu
+
+### For Debians based systems:
+```
+sudo apt-get install python2.7 python-django python-xlrd python-xlsxwriter python-crypto
+```
+OR
+```
+pip -E install django xlrd xlsxwriter crypto
+```
 ### Load database
 
-#refreshing the database
+#### Refreshing the database
+```
 rm db.sqlite3
+```
+```
 python manage.py shell <dummydata.py
-#note the above command will not generate an admin account. To do that make 'interactive = True' in dummydata.py and copy-paste dummydata.py in `python manage.py shell`
-
-Run
+```
+Note the above command will not generate an admin account. To do that make 'interactive = True' in dummydata.py then run
 ```
 python manage.py shell < dummydata.py
 ```
