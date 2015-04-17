@@ -122,11 +122,13 @@ def voterView(request):
 				voter.save()
 				for post in votes:
 					for candidateName in votes[post]:
+						print candidateName
 						candidate = Candidates.objects.filter(username=candidateName)[0]
 						if candidate.approved == False:
 							sys.stderr.write("Hack Attempt: User: "+request.users.username+" tried to for an unapproved candidate!.")
 							return HttpResponse("That candidate was not approved. This will be reported!!")
 						assert(len(Candidates.objects.filter(username=candidateName)) == 1)
+						print candidate.voteInfo
 						voteInfo = eval(candidate.voteInfo)
 						voteInfo['totVotes'] += 1
 						voteInfo['courseWise'][voter.course] += 1
@@ -235,8 +237,8 @@ def registrationform(request):
 			#FEATURE REQUIREMENT - data is not persistent - venkat
 			return render(request, 'form.html', {"formFormat": formFormat ,  "postname":postname, "alert": "Please give the photo in a proper format (jpg, jpeg, png or bmp)"}, context_instance=RequestContext(request))
 
-		reg_cand = Candidates(username=request.user.username,details=json.dumps(record),postname=postname,photo=photo,approved=False)
-		reg_cand.save()
+		reg_cand = makeCandidate(username=request.user.username,details=json.dumps(record),postname=postname,photo=photo,approved=False)
+		assertTrue(reg_cand)
 		return HttpResponseRedirect('/gems/voterHome')
 
 @login_required
@@ -388,7 +390,8 @@ def view_candidate_information(request):
 
 		assert(field != None)
 		if field['type'] == 'file':
-			value = "/media/" + UploadedDocuments.objects.filter(id=details[x])[0].document.name
+			value = details[x]
+			# value = "/media/" + UploadedDocuments.objects.filter(id=details[x])[0].document.name
 		else:
 			value = details[x]
 		detailsList += [{'description': field['description'], 'value': value, 'type': field['type']}]
