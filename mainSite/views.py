@@ -25,6 +25,7 @@ from .databaseManager import *
 from gems.settings import BASE_DIR
 import logging
 import databaseManager
+import allowed_ips
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +79,15 @@ def voter_info(request):
 
 @login_required
 def voterView(request):
+	x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+	if x_forwarded_for:
+		ip = x_forwarded_for.split(',')[0]
+	else:
+		ip = request.META.get('REMOTE_ADDR')
+	if ip not in allowed_ips.allowed_ips:
+		sys.stderr.write("Unauthorised access from ip: " + ip)
+		return HttpResponse("You cannot vote fron this computer. Please go to an officially designated computer.")
+
 	if len(Users.objects.filter(username=request.user.username)) == 0:
 		return HttpResponse("Sorry, you are not registered as a voter")
 	if request.method == "POST":
@@ -511,11 +521,6 @@ def __excelFilecheck__(path):
 		else:
 			pass
 
-	#remove file
-	try:
-		os.remove(path)
-	return 0
-
 @login_required
 def change_electionstate(request):
 	return render(request, 'election-state.html',{'startAct' : True})
@@ -579,6 +584,12 @@ def register_users(request):
 							userlist.append(user)
 					#registerUsers(userlist)
 					newdoc.delete()
+					#remove file
+					try:
+						os.remove(path)
+					except:
+						print "Unable to remove excel file"
+					return 0
 			else:
 				messages.error(request, 'Incorrect extension. Please upload an MS Excel file.')
 
