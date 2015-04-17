@@ -180,6 +180,7 @@ def getStats():
 		candStatList.append(tup)
 	return candStatList
 
+
 #---------------------
 
 def getWinner(Stats):

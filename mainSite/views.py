@@ -662,8 +662,11 @@ def results_page(request):
 	res = []
 	for postname in tally:
 		post = Posts.objects.filter(postname=postname)[0]
-		res += [(postname, len(tally[postname]), post.postCount, tally[postname], '#')]
-	#print res
+		res += [(postname,post.postCount,len(tally[postname]),[(tally[postname][0][0], tally[postname][0][1], '#')])]
+	print res
+	#res = [('Vice President',1,1, [('candOne', 400, 'url1')]), 
+	#('Senator', 1, 3,[('candFive', 500, 'url2'), ('candSix', 764, 'url3'), ('candSeven', 200, 'url4')]),
+	#('Technical Secratary', 1,1,[('CandFour', 500, 'url5')])]
 	if len(Candidates.objects.filter(username=request.user.username)) == 0:
 		return render(request, 'election-results-admin.html', {'stats': res, "NoOfVotes": 10})
 	else:
