@@ -405,7 +405,12 @@ def view_candidate_information(request):
 	if not isApproved and not isAdmin:
 		return HttpResponse("Sorry, no such candidate exists") #deliberately chose the same string so that information is not leaked
 
-	return render(request, 'view-candidate-information.html', {'details': detailsList1, 'photo': candidate_photo, 'username': candidate_username, 'candidateName': candidate_name, 'isAdmin': isAdmin, 'isApproved': isApproved, 'startAct':True})
+	if isAdmin:
+		base_template_name = "blank-page.html"
+	else:
+		base_template_name = "voterblank.html"
+
+	return render(request, 'view-candidate-information.html', {'details': detailsList1, 'photo': candidate_photo, 'username': candidate_username, 'candidateName': candidate_name, 'isAdmin': isAdmin, 'isApproved': isApproved, 'startAct':True, 'base_template_name': base_template_name})
 
 def view_candidate_list(request):
 	if not request.method == "GET":

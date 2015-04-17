@@ -1,4 +1,4 @@
-{% extends "blank-page.html" %}
+{% extends base_template_name %}
 {% block content %}
 
                         <h1 class="page-header">
@@ -22,7 +22,7 @@
             {% endfor %}
             <input type="hidden" name="username" value="{{username}}"/>
                 {% if isAdmin %}
-                    {% if isApproved %}
+                    {% if not isApproved %}
                         <button type="submit" class="btn btn-success">Approve Candidate</button>
                     {% else %}
                         <button type="submit" class="btn btn-danger">Disapprove Candidate</button>
