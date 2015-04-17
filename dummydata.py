@@ -41,14 +41,14 @@ print passy
 post1=Posts(postname='Vice President', info_fields=[{'description': u'Agenda', 'type': u'file', 'id': 'field0', 'validation': u'.*\\.pdf', 'placeholder': u'', 'options': u''}], eligibleGender='a', eligibleCourse='a', postCount = 1)
 post1.save()
 
-post2=Posts(postname='Senators (UG)', info_fields=[{'description': u'Agenda', 'type': u'file', 'id': 'field0', 'validation': u'.*\\.pdf', 'placeholder': u'', 'options': u''}, {'description': u'Course', 'type': u'radio', 'id': 'field1', 'validation': u'UG', 'placeholder': u'', 'options': u'UG; PG; Other'}], eligibleGender='a', eligibleCourse='btech', postCount = 3)
-post2.save()
+# post2=Posts(postname='Senators (UG)', info_fields=[{'description': u'Agenda', 'type': u'file', 'id': 'field0', 'validation': u'.*\\.pdf', 'placeholder': u'', 'options': u''}, {'description': u'Course', 'type': u'radio', 'id': 'field1', 'validation': u'UG', 'placeholder': u'', 'options': u'UG; PG; Other'}], eligibleGender='a', eligibleCourse='btech', postCount = 3)
+# post2.save()
 
-post3=Posts(postname='Senators (Girls)', info_fields=[{'description': u'Agenda', 'type': u'file', 'id': 'field0', 'validation': u'.*\\.pdf', 'placeholder': u'', 'options': u''}, {'description': u'Gender', 'type': u'radio', 'id': 'field', 'validation': u'Female', 'placeholder': u'', 'options': u'Female; Male'}], eligibleGender='f', eligibleCourse='a', postCount = 1)
-post3.save()
+# post3=Posts(postname='Senators (Girls)', info_fields=[{'description': u'Agenda', 'type': u'file', 'id': 'field0', 'validation': u'.*\\.pdf', 'placeholder': u'', 'options': u''}, {'description': u'Gender', 'type': u'radio', 'id': 'field', 'validation': u'Female', 'placeholder': u'', 'options': u'Female; Male'}], eligibleGender='f', eligibleCourse='a', postCount = 1)
+# post3.save()
 
-post4=Posts(postname='Gymkhana Secretary', info_fields=[{'description': u'Agenda', 'type': u'file', 'id': 'field0', 'validation': u'.*\\.pdf', 'placeholder': u'', 'options': u''}, {'description': u'Gender', 'type': u'radio', 'id': 'field', 'validation': u'Female', 'placeholder': u'', 'options': u'Female; Male'}], eligibleGender='a', eligibleCourse='a', postCount = 3)
-post4.save()
+# post4=Posts(postname='Gymkhana Secretary', info_fields=[{'description': u'Agenda', 'type': u'file', 'id': 'field0', 'validation': u'.*\\.pdf', 'placeholder': u'', 'options': u''}, {'description': u'Gender', 'type': u'radio', 'id': 'field', 'validation': u'Female', 'placeholder': u'', 'options': u'Female; Male'}], eligibleGender='a', eligibleCourse='a', postCount = 3)
+# post4.save()
 #reg_cand = Candidates(username='kayush',details=json.dumps(record),postname=postname,photo=photo,approved=False)
 #reg_cand.save()
 
