@@ -624,7 +624,7 @@ def register_users(request):
 
 @login_required
 def results_page(request):
-	if len(Candidates.objects.filter(username=request.user.username)) != 0 and GlobalVariables.objects.get('electionState') != 'post-election':
+	if len(Candidates.objects.filter(username=request.user.username)) != 0  and GlobalVariables.objects.filter(varname='electionState')[0] != 'post-election':
 		return HttpResponse("Only the administrator can access this page before the election has concluded.")
 	tally = {}
 	for candidate in Candidates.objects.all():
