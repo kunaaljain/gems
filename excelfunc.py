@@ -28,7 +28,7 @@ def passwordtoexcel(passwords,usernames):
 
 def votestoexcel(text, certi, publickey, verified, result):
 	# Create a workbook and add a worksheet.
-	workbook = xlsxwriter.Workbook('votes.xlsx')
+	workbook = xlsxwriter.Workbook('static/votes.xlsx')
 	worksheet = workbook.add_worksheet()
 	boolname = 'False'
 

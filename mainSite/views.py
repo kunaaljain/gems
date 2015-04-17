@@ -241,7 +241,7 @@ def registrationform(request):
 @login_required
 def adminHome(request):
 	if len(Users.objects.filter(username=request.user.username)) != 0:
-		return HttpResponse('Only administrators are allwoed to access this page!')
+		return HttpResponse('Only administrators are allowed to access this page!')
 	if request.method == "POST":
 		if "electionState" in request.POST.dict():
 			x = GlobalVariables.objects.filter(varname='electionState')[0]
@@ -417,7 +417,10 @@ def view_candidate_list(request):
 		raise IOError
 	candidates = Candidates.objects.all()
 	res = {}
+	isAdmin = (len(Users.objects.filter(username=request.user.username)) == 0)
 	for candidate in candidates:
+		if not isAdmin and candidate.approved != True:
+			continue
 		try:
 			name = Users.objects.filter(username=candidate.username)[0].name
 		except IndexError:
@@ -426,7 +429,8 @@ def view_candidate_list(request):
 			res[candidate.postname] = []
 		user = Users.objects.get(username=candidate.username)
 		res[candidate.postname] += [{'username': candidate.username, 'name': name, 'course': user.course, 'gender': user.gender, 'hostel': user.hostel}]
-	return render(request, 'view-candidate-list.html', {'posts': res, "ipAct" :True})
+	base_template_name = ("voterblank.html", "blank-page.html")[isAdmin]
+	return render(request, 'view-candidate-list.html', {'posts': res, "ipAct" :True, 'candidatesAct': True, 'base_template_name': base_template_name})
 
 def discuss(request,o_id):
 	'''Discuss Function renders a discussion page for doubts/agendas.It takes input as the request, object id of the agenda
@@ -528,7 +532,8 @@ def __excelFilecheck__(path):
 
 @login_required
 def change_electionstate(request):
-	return render(request, 'election-state.html',{'startAct' : True})
+	electionState = GlobalVariables.objects.get(varname='electionState').value
+	return render(request, 'election-state.html',{'startAct' : True, 'electionState': electionState})
 
 @login_required
 def register_users(request):
@@ -683,3 +688,10 @@ def selectedCandidates(request):
 	#winnerlist = [('Vice President', [('candOne', 400, 'permaLink')]), ('Senator', [('candFive', 500, 'xxx'), ('candSix', 764, 'xxx'), ('candSeven', 200, 'xxx')]), ('Technical Secratary', [('CandFour', 500)])]
 	contextObj = Context({'winnerlist' : winnerlist})
 	return render_to_response('selected-candidates.html', contextObj)
+
+@login_required
+def generate_certificates(request):
+	if len(Users.objects.filter(username=request.user.username)) != 0:
+		return HttpResponse('Only administrators are allowed to access this page!')
+	databaseManager.verifyVote()
+	return HttpResponseRedirect('/gems/adminHome')

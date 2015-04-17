@@ -25,7 +25,8 @@
 				<a href="adminHome/create-form">Create Posts and Design Forms</a>
 			</div>
 			<div class="panel-body">
-				Create posts and design, <b>some more user documentation goes here</b>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+				<p>Specify what posts are entailed by this election and what information is required from the candidate's side (apart from a photo) to stand for the election. Further you can also specify some eligibiliy criteria for candidates based on course (ie. B.Tech, M.Tech, PhD etc.) and gender. You may also specify the number of seats for a particular post</p>
+				<p>In order to create the form, first add a post and click 'Create Form'. There you will be given an option to specify eligibility criteria and number of available posts. You can then add form fields by specifying the description (which will be displayed) an explanation for the candidate and a <a href="https://duckduckgo.com/l/?kh=-1&uddg=https%3A%2F%2Fdocs.python.org%2F2%2Fhowto%2Fregex.html">regular expression</a> for validating the form. Each field may be either a text field, radio field, a checkbox or a file upload.</p>
 			</div>
 		</div>
 	</div>
@@ -36,14 +37,23 @@
 				<a href="adminHome">Control Election State</a>
 			</div>
 			<div class="panel-body">
-				<form action="/gems/adminHome" method="post">
-					{% csrf_token %}
-					 <input type="radio" class="form-control" name="electionState" value="pre-election" {% if electionState == 'pre-election' %} checked {% endif %}>Pre Election
-					 <input type="radio" class="form-control" name="electionState" value="election" {% if electionState == 'election' %} checked {% endif %}>During Election
-					 <input type="radio" class="form-control" name="electionState" value="post-election" {% if electionState == 'post-election' %} checked {% endif %}>Post Election
-					 <br/><br/>
-					<button type="submit" class="btn btn-default">Change State</button>
-				</form>
+				Specify the state of the election. Features available will cricually depend on this (eg. results will be visible to the public only after the election and voting will be allowed only during the election etc.).
+				<div class="row">
+					<form action="/gems/adminHome" method="post">
+						{% csrf_token %}
+						<div class="col-sm-4">
+						 <input type="radio" class="form-control" name="electionState" value="pre-election" {% if electionState == 'pre-election' %} checked {% endif %}>Pre Election
+						</div>
+						<div class="col-sm-4">
+						 <input type="radio" class="form-control" name="electionState" value="election" {% if electionState == 'election' %} checked {% endif %}>During Election
+						</div>
+						<div class="col-sm-4">
+						 <input type="radio" class="form-control" name="electionState" value="post-election" {% if electionState == 'post-election' %} checked {% endif %}>Post Election
+						</div>
+				</div>
+						 <br/><br/>
+						<button type="submit" class="btn btn-primary">Change State</button>
+					</form>
 			</div>
 		</div>
 	</div>
@@ -55,7 +65,47 @@
 				<a href="adminHome/register-users">Register Voters with the System</a>
 			</div>
 			<div class="panel-body">
-				<b>some more user documentation goes here</b>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+				<p>This is where you specify the electoral roll. Please prepare an excel file wil the Username (webmail if without '@iitg.ernet.in'), Name, Department, Course, Gender and Hostel (in that order). The data should start from the second row and the first row may contain headings for your reference. Once the file is ready, you can upload the file. The system will process the file and extract data from it. The extracted data will be displayed. When you are happy with your data, you can add it to the database.</p>
+				<p>When users are registered, an excel file in an appropriate format will be automatically generated. This can be used with google mail-merge using <a href="/static/sendEmail.gs">this script</a> (which is also available in the 'scripts' directory of the election management system). This will send emails notifying users of their passwords. When the system is online, users have the option of changing their password as they see fit.</p>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<a href="/gems/candidates/view-candidate-list">View and Approve Candidates</a>
+			</div>
+			<div class="panel-body">
+				<p>This page displays the list of all the people who have nominated themselves for the election. You may view and verify their details and approve/disapprove them as per your discretion (note that some level if filtering is automatically done based on gender and course as specified in the posts form by you).</p>
+				<p>Whenever you change your decision and notify the system of the decision, it will automatically generate a sample email for you that you can modify and send to the candidate. The webmail id of the candidate is also displayed for your convenience.</p>
+				<p>Note that the candidate information and list will be publicly available if and only if they are approved. The admin may of course view all candidates. In an exceptional case some change in candidate details is required, you may delete the candidate from <a href="http://127.0.0.1:8000/admin/mainSite/candidates/">here</a> and ask the candidate to fill the form again.</p>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<a href="/gems/voterHome/discuss/list">Discuss</a>
+			</div>
+			<div class="panel-body">
+				<p>Democracy is built on the pillars of active discussion among and between the electorate and the candidates. Raise your issues and discuss problems and their candidates in this inbuilt discussion page.</p>
+				<p>Please note that the usual rules of etiquette apply, so if any user uses inappropriate language, you may view their details and report them. You can also delete those comments though we have not implemented a very nice UI yet. Please search through entries in <a href="/admin/mainSite/comments/">this page</a><p>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<a href="/gems/results/results-page">Discuss</a>
+			</div>
+			<div class="panel-body">
+				<p>The ultimate purpose behind having elections is to elect candidates. The administrator can see the statistics live as the election proceeds, however the public will be able to view the results only after the election is over (as specified by the election state). After the election is over, please click the button below to generate an excel file containing the vote strings and their certificates in the home folder of this server. You may distribute this publicly so that everybody can verify that the system has not been compromised with.</p>
+				<form action="/gems/adminHome/generate-certificates" method="post">
+					{% csrf_token %}
+					<button type="submit" class="btn btn-primary">Generate Certificates</button> <a class="btn btn-primary" href="/static/votes.xlsx">Download Certificates</a>	
+				</form>
 			</div>
 		</div>
 	</div>

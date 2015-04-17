@@ -47,12 +47,12 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="adminHome">IITG Gymkhana Election Portal</a>
+                <a class="navbar-brand" href="/gems/adminHome">IITG Gymkhana Election Portal</a>
             </div>
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> Account {{username}} <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> Account (Admin) <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li class="divider"></li>
                         <li>
@@ -76,6 +76,13 @@
                     
                     >
                         <a href="/gems/adminHome/create-form" ><i class=" fa fa-fw fa-file"></i>Create Posts and Design Forms</a>
+                    </li>
+                    <li
+                    {% if candidatesAct %} 
+                             class = "active" {% endif %}
+                    
+                    >
+                        <a href="/gems/candidates/view-candidate-list" ><i class=" fa fa-fw fa-tasks"></i>View Candidates</a>
                     </li>
                     <li
                     {% if discussAct %} 

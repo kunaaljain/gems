@@ -58,6 +58,8 @@ class Comments(models.Model):
 	author = models.ForeignKey(Users,null=True)
 	content = models.CharField(max_length=80000)
 	likes = models.BigIntegerField()
+	def __unicode__(self):
+		return self.content
 
 class Agenda(models.Model):
 	candidate = models.ForeignKey(Users)
