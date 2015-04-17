@@ -105,7 +105,6 @@ def voterView(request):
 				#print(candidatesVoted)
 				jsonDict[item['postName']] = candidatesVoted
 			jsonStr = json.dumps(jsonDict)
-			contextObj = Context()
 			return render(request, 'votingpage.html', {'takePassword': True, 'votes': jsonStr})
 		else:
 			password = request.POST.dict()['password']
@@ -420,7 +419,8 @@ def view_candidate_list(request):
 			assert(False)
 		if not candidate.postname in res:
 			res[candidate.postname] = []
-		res[candidate.postname] += [{'username': candidate.username, 'name': name}]
+		user = Users.objects.get(username=candidate.username)
+		res[candidate.postname] += [{'username': candidate.username, 'name': name, 'course': user.course, 'gender': user.gender, 'hostel': user.hostel}]
 	return render(request, 'view-candidate-list.html', {'posts': res, "ipAct" :True})
 
 def discuss(request,o_id):

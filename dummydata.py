@@ -5,31 +5,31 @@ from django.core.management import call_command
 # call_command('makemigrations', interactive = False)
 # call_command('migrate', interactive = False)
 
-call_command('syncdb', interactive = False)
+call_command('syncdb', interactive = True)
  
 #This part is essential to the functioning of the system:
 from mainSite.models import *
-# GlobalVariables(varname='electionState', value='pre-election').save()
+GlobalVariables(varname='electionState', value='pre-election').save()
 
  #This is optional
 
 userList = [{'username':'kayush', 'department':'cs', 'name':'Ayush', 'course':'btech', 'hostel' : 'siang', 'gender': 'm'},
-		 {'username':'adgfd', 'department':'cs', 'name':'sdg', 'course':'btech', 'hostel' : 'kameng', 'gender': 'm'},
-		 {'username':'Student1', 'department':'ee', 'name':'Nice Name', 'course':'mtech', 'hostel' : 'subuansiri', 'gender': 'f'},
-		 {'username':'Student2', 'department':'dd', 'name':'Hiyaa', 'course':'phd', 'hostel' : 'siang', 'gender': 'm'},
-		 {'username':'Student3', 'department':'me', 'name':'Very Nice Name', 'course':'phd', 'hostel' : 'siang', 'gender': 'm'},
-		 {'username':'Student4', 'department':'dd', 'name':'Name1', 'course':'phd', 'hostel' : 'siang', 'gender': 'm'},
-		 {'username':'Student5', 'department':'dd', 'name':'Name2', 'course':'phd', 'hostel' : 'siang', 'gender': 'm'},
-		 {'username':'Student6', 'department':'cs', 'name':'Hiyaa', 'course':'phd', 'hostel' : 'siang', 'gender': 'm'},
-		 {'username':'Student7', 'department':'cs', 'name':'Hiyaa', 'course':'mtech', 'hostel' : 'kameng', 'gender': 'm'},
-		 {'username':'Student8', 'department':'cs', 'name':'Hiyaa', 'course':'mtech', 'hostel' : 'kameng', 'gender': 'm'},
-		 {'username':'Student9', 'department':'ee', 'name':'Hiyaa', 'course':'mtech', 'hostel' : 'kameng', 'gender': 'm'},
-		 {'username':'Student10', 'department':'ee', 'name':'Hiyaa', 'course':'btech', 'hostel' : 'kapili', 'gender': 'm'},
-		 {'username':'Student11', 'department':'ee', 'name':'Hiyaa', 'course':'btech', 'hostel' : 'kapili', 'gender': 'm'},
-		 {'username':'Student12', 'department':'me', 'name':'Hiyaa', 'course':'btech', 'hostel' : 'kapili', 'gender': 'm'},
-		 {'username':'Student13', 'department':'me', 'name':'Hiyaa', 'course':'btech', 'hostel' : 'subhansiri', 'gender': 'f'},
-		 {'username':'Student14', 'department':'dd', 'name':'Hiyaa', 'course':'btech', 'hostel' : 'subhansiri', 'gender': 'f'},
-		 {'username':'Student15', 'department':'dd', 'name':'Hiyaa', 'course':'mtech', 'hostel' : 'subhansiri', 'gender': 'f'}]
+			 {'username':'adgfd', 'department':'cs', 'name':'sdg', 'course':'btech', 'hostel' : 'kameng', 'gender': 'm'},
+			 {'username':'Student1', 'department':'ee', 'name':'Nice Name', 'course':'mtech', 'hostel' : 'subuansiri', 'gender': 'f'},
+			 {'username':'Student2', 'department':'dd', 'name':'Hiyaa', 'course':'phd', 'hostel' : 'siang', 'gender': 'm'},
+			 {'username':'Student3', 'department':'me', 'name':'Very 	Nice Name', 'course':'phd', 'hostel' : 'siang', 'gender': 'm'},
+			 {'username':'Student4', 'department':'dd', 'name':'Name1', 'course':'phd', 'hostel' : 'siang', 'gender': 'm'},
+			 {'username':'Student5', 'department':'dd', 'name':'Name2', 'course':'phd', 'hostel' : 'siang', 'gender': 'm'},
+			 {'username':'Student6', 'department':'cs', 'name':'Hiyaa', 'course':'phd', 'hostel' : 'siang', 'gender': 'm'},
+			 {'username':'Student7', 'department':'cs', 'name':'Hiyaa', 'course':'mtech', 'hostel' : 'kameng', 'gender': 'm'},
+			 {'username':'Student8', 'department':'cs', 'name':'Hiyaa', 'course':'mtech', 'hostel' : 'kameng', 'gender': 'm'},
+			 {'username':'Student9', 'department':'ee', 'name':'Hiyaa', 'course':'mtech', 'hostel' : 'kameng', 'gender': 'm'},
+			 {'username':'Student10', 'department':'ee', 'name':'Hiyaa', 'course':'btech', 'hostel' : 'kapili', 'gender': 'm'},
+			 {'username':'Student11', 'department':'ee', 'name':'Hiyaa', 'course':'btech', 'hostel' : 'kapili', 'gender': 'm'},
+			 {'username':'Student12', 'department':'me', 'name':'Hiyaa', 'course':'btech', 'hostel' : 'kapili', 'gender': 'm'},
+			 {'username':'Student13', 'department':'me', 'name':'Hiyaa', 'course':'btech', 'hostel' : 'subhansiri', 'gender': 'f'},
+			 {'username':'Student14', 'department':'dd', 'name':'Hiyaa', 'course':'btech', 'hostel' : 'subhansiri', 'gender': 'f'},
+			 {'username':'Student15', 'department':'dd', 'name':'Hiyaa', 'course':'mtech', 'hostel' : 'subhansiri', 'gender': 'f'}]
 
 passy = databaseManager.registerUsers(userList)
 
@@ -52,11 +52,13 @@ post3.save()
 #reg_cand = Candidates(username='kayush',details=json.dumps(record),postname=postname,photo=photo,approved=False)
 #reg_cand.save()
 
-GlobalVariables(varname='electionState', value='election').save()
-databaseManager.registerVote("some text pertaining to a vote", "kayush", passy[0])
-databaseManager.registerVote("some text pertaining to a vote1", "kayush", passy[0])
-databaseManager.registerVote("some text pertaining to a vote2", "kayush", passy[0])
-databaseManager.verifyVote()
+#Candidates(username='kayush',details='',postname=postname,photo=photo,approved=False)
+
+#GlobalVariables(varname='electionState', value='election').save()
+#databaseManager.registerVote("some text pertaining to a vote", "kayush", passy[0])
+#databaseManager.registerVote("some text pertaining to a vote1", "kayush", passy[0])
+#databaseManager.registerVote("some text pertaining to a vote2", "kayush", passy[0])
+#databaseManager.verifyVote()
 #sampe post info_fields
 #[{'description': u'Name', 'type': u'text', 'id': 'field0', 'validation': u'', 'placeholder': u'Your Name', 'options': u''}, {'description': u'Date of Birth', 'type': u'text', 'id': 'field1', 'validation': u'[0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9]', 'placeholder': u'DOB - dd-mm-yyyy', 'options': u''}, {'description': u'Agenda', 'type': u'file', 'id': 'field2', 'validation': u'.*.pdf', 'placeholder': u'', 'options': u''}]
 
