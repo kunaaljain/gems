@@ -8,7 +8,7 @@ from Crypto.PublicKey import RSA
 from django.contrib.auth.models import User
 from django.db.models import Q
 
-from models import Users, Candidates,Votes, PublicKeys, ChallengeStrings, Posts, GlobalVariables
+from models import Users, Candidates,Votes, PublicKeys, ChallengeStrings, Posts, GlobalVariables, Agenda
 import cryptography
 import excelfunc
 

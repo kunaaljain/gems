@@ -35,6 +35,8 @@ class Votes(models.Model):
 
 	publicKey = models.ForeignKey("PublicKeys")
 	challengeStr = models.ForeignKey("ChallengeStrings")
+	def __unicode__(self):
+		return self.plainText
 
 class ChallengeStrings(models.Model):
 	challengeStr = models.CharField(max_length=2048)
@@ -65,12 +67,18 @@ class Agenda(models.Model):
 	candidate = models.ForeignKey(Users)
 	content = models.CharField(max_length=80000)
 	comments = models.ManyToManyField("Comments",blank=True)
+	def __unicode__(self):
+		return self.candidate.username
 
 class CommentLikes(models.Model):
 	user = models.ForeignKey(Users)
 	comment = models.ForeignKey(Comments)
+	def __unicode__(self):
+		return self.comment.content
 
 class GlobalVariables(models.Model):
 	'''To store miscellaneous global variables such as election state.'''
 	varname = models.CharField(max_length=128, unique=True)
 	value = models.CharField(max_length=128)
+	def __unicode__(self):
+		return self.varname + " = " + self.value

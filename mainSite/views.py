@@ -238,7 +238,7 @@ def registrationform(request):
 			return render(request, 'form.html', {"formFormat": formFormat ,  "postname":postname, "alert": "Please give the photo in a proper format (jpg, jpeg, png or bmp)"}, context_instance=RequestContext(request))
 
 		reg_cand = makeCandidate(username=request.user.username,details=json.dumps(record),postname=postname,photo=photo,approved=False)
-		assertTrue(reg_cand)
+		assert(reg_cand)
 		return HttpResponseRedirect('/gems/voterHome')
 
 @login_required
@@ -484,7 +484,8 @@ def discuss_list(request):
 		if not candidate.postname in res:
 			res[candidate.postname] = []
 		res[candidate.postname] += [{'id': agenda.id, 'name': name}]
-	return render(request, 'discuss-list.html', {'posts': res})
+	base_template_name = ("voterblank.html", "blank-page.html")[len(Users.objects.filter(username=request.user.username)) == 0]
+	return render(request, 'discuss-list.html', {'posts': res, 'base_template_name': base_template_name})
 
 
 #ab1a507dd0eee136e381
@@ -667,10 +668,9 @@ def results_page(request):
 	#res = [('Vice President',1,1, [('candOne', 400, 'url1')]), 
 	#('Senator', 1, 3,[('candFive', 500, 'url2'), ('candSix', 764, 'url3'), ('candSeven', 200, 'url4')]),
 	#('Technical Secratary', 1,1,[('CandFour', 500, 'url5')])]
-	if len(Candidates.objects.filter(username=request.user.username)) == 0:
-		return render(request, 'election-results-admin.html', {'stats': res, "NoOfVotes": 10})
-	else:
-		return render(request, 'election-results.html', {'stats': res, "NoOfVotes": 10})
+
+	base_template_name = ("voterblank.html", "blank-page.html")[len(Users.objects.filter(username=request.user.username)) == 0]
+	return render(request, 'election-results.html', {'stats': res, "NoOfVotes": 10, 'base_template_name': base_template_name})
 
 def candidateStat(request,candidateName):
 	if len(Candidates.objects.filter(username=request.user.username)) != 0 and GlobalVariables.objects.get('electionState') != 'post-election':
