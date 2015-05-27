@@ -30,3 +30,4 @@ Note the above command will not generate an admin account. To do that make 'inte
 ```
 python manage.py shell < dummydata.py
 ```
+## TESTING
